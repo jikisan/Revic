@@ -5,11 +5,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.revic_capstone.R;
@@ -24,31 +27,59 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
+import Adapters.AdapterUsersItem;
 import Models.Users;
 import Objects.TextModifier;
 
 public class HomeFragment extends Fragment {
 
+    private SearchView sv_search;
+    private RecyclerView recyclerView_searches;
+    private ImageView iv_bannerPhoto;
+
+    private ArrayList<Users> arrUsers, arr;
+
     private FirebaseUser user;
     private DatabaseReference userDatabase;
     private String userID;
 
-    private ImageView iv_bannerPhoto;
+    private AdapterUsersItem adapterUsersItem;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
+        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
+
 
         setRef(view);
         generateUserData();
+        generateRecyclerLayout();
         clickListeners();
+
+        sv_search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                search(s);
+                return false;
+            }
+        });
 
         return view;
     }
+
+
 
     private void generateUserData() {
 
@@ -78,7 +109,30 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        userDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                if(snapshot.exists()){
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Users users = dataSnapshot.getValue(Users.class);
+
+                        if(users.getUsersId().equals(userID))
+                        {
+                            continue;
+                        }
+
+                        arrUsers.add(users);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity(), "Error retrieving data.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void clickListeners() {
@@ -95,5 +149,47 @@ public class HomeFragment extends Fragment {
     private void setRef(View view) {
 
         iv_bannerPhoto = view.findViewById(R.id.iv_bannerPhoto);
+        sv_search = view.findViewById(R.id.sv_search);
+        recyclerView_searches = view.findViewById(R.id.recyclerView_searches);
+    }
+
+    private void search(String s) {
+        arr = new ArrayList<>();
+        for(Users object : arrUsers)
+        {
+            if (object.getFname().toLowerCase().contains(s.toLowerCase()) || object.getLname().toLowerCase().contains(s.toLowerCase()))
+            {
+                arr.add(object);
+            }
+
+            if(s.isEmpty())
+            {
+                arr.clear();
+            }
+
+            adapterUsersItem = new AdapterUsersItem(arr);
+            recyclerView_searches.setAdapter(adapterUsersItem);
+        }
+
+        adapterUsersItem.setOnItemClickListener(new AdapterUsersItem.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                String userID = arr.get(position).getUsersId();
+                Intent intent = new Intent(getContext(), profile_page.class);
+                intent.putExtra("userID", userID);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+    private void generateRecyclerLayout() {
+        recyclerView_searches.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView_searches.setLayoutManager(linearLayoutManager);
+
+        arrUsers = new ArrayList<>();
     }
 }

@@ -10,9 +10,9 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/white"
         android:focusable="false"
         android:gravity="center"
@@ -21,24 +21,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/et_search"
+        <SearchView
+            android:id="@+id/sv_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="10"
-            android:maxHeight="35dp"
             android:background="@drawable/rounded5"
-            android:drawableStart="@drawable/search"
-            android:hint="Search"
-            android:focusedByDefault="false"
-            android:drawablePadding="8sp"
-            android:padding="8dp" />
+            android:focusable="false"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_bannerPhoto"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="16dp"
             android:background="@drawable/rounded100"
             android:backgroundTint="#92C5C5C5"
             android:padding="4dp"
@@ -46,6 +43,15 @@
 
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_searches"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
