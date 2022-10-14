@@ -1,18 +1,27 @@
 package com.example.revic_capstone;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -23,17 +32,23 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import Adapters.fragmentAdapter;
+import Models.Photos;
 import Models.Users;
-import Objects.RealtimeDB;
+import Models.Videos;
 import Objects.TextModifier;
 
 public class profile_user_page extends AppCompatActivity {
+
+    private static final int PICK_IMG = 1;
+    private static final int PICK_VID = 2;
 
     private ExtendedFloatingActionButton btn_post;
     private FloatingActionButton btn_addPhotos, btn_addVideos;
@@ -41,19 +56,23 @@ public class profile_user_page extends AppCompatActivity {
     private LinearLayout backBtn;
     private fragmentAdapter adapter;
     private ImageView iv_userPhoto;
+    private ProgressDialog progressDialog;
 
     private TabLayout tab_layout;
     private ViewPager2 vp_viewPager2;
 
-    private StorageReference userStorage;
+    private StorageReference userStorage, photoStorage, videoStorage;
     private FirebaseUser user;
-    private DatabaseReference userDatabase;
+    private DatabaseReference userDatabase, photoDatabase, videoDatabase;
 
     private String userID;
+    private int uploads = 0;
 
     private ArrayList<Users> arrUsers = new ArrayList<>();
+    private ArrayList<Uri> arrImageList = new ArrayList<Uri>();
+    private ArrayList<Uri> arrVideoList = new ArrayList<Uri>();
 
-    Boolean isAllFabsVisible;
+    private Boolean isAllFabsVisible;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +80,16 @@ public class profile_user_page extends AppCompatActivity {
         setContentView(R.layout.profile_user_page);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
+
+        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
+        videoDatabase = FirebaseDatabase.getInstance().getReference("Videos");
+
+        photoStorage = FirebaseStorage.getInstance().getReference("Photos").child(userID);
+        videoStorage = FirebaseStorage.getInstance().getReference("Videos").child(userID);
+
+
 
         setRef();
         generateUserData();
@@ -170,15 +197,22 @@ public class profile_user_page extends AppCompatActivity {
         btn_addPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(profile_user_page.this, "Add Photo Button Clicked", Toast.LENGTH_SHORT).show();
-            }
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Select Picture"), PICK_IMG);            }
         });
 
         btn_addVideos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(profile_user_page.this, "Add Video Button Clicked", Toast.LENGTH_SHORT).show();
-            }
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("video/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Select Video"), PICK_VID);            }
         });
     }
 
@@ -242,5 +276,192 @@ public class profile_user_page extends AppCompatActivity {
         vp_viewPager2 = findViewById(R.id.vp_viewPager2);
 
         iv_userPhoto = findViewById(R.id.iv_userPhoto);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMG) {
+            if (resultCode == RESULT_OK) {
+                if (data.getClipData() != null) {
+                    int count = data.getClipData().getItemCount();
+
+                    int CurrentImageSelect = 0;
+
+                    while (CurrentImageSelect < count) {
+                        Uri imageuri = data.getClipData().getItemAt(CurrentImageSelect).getUri();
+                        arrImageList.add(imageuri);
+                        CurrentImageSelect = CurrentImageSelect + 1;
+                    }
+
+                    int imageCount = arrImageList.size();
+
+                    uploadPhotos(imageCount);
+
+
+                }
+                else
+                {
+                    Uri imageuri = data.getData();
+                    if (imageuri != null)
+                    {
+
+                        arrImageList.add(imageuri);
+
+                        int imageCount = arrImageList.size();
+                        uploadPhotos(imageCount);
+                    }
+                }
+
+            }
+
+        }
+        else  if (requestCode == PICK_VID) {
+            if (resultCode == RESULT_OK) {
+                if (data.getClipData() != null) {
+                    int count = data.getClipData().getItemCount();
+
+                    int CurrentVideoSelect = 0;
+
+                    while (CurrentVideoSelect < count) {
+                        Uri videouri = data.getClipData().getItemAt(CurrentVideoSelect).getUri();
+                        arrVideoList.add(videouri);
+                        CurrentVideoSelect = CurrentVideoSelect + 1;
+                    }
+
+                    int vidCount = arrVideoList.size();
+                    uploadVideos(vidCount);
+
+                }
+                else {
+                    Uri uri = data.getData();
+                    if (uri != null) {
+
+                        arrVideoList.add(uri);
+
+                        int vidCount = arrVideoList.size();
+                        uploadVideos(vidCount);
+
+
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+    private void uploadVideos(int vidCount) {
+
+        progressDialog = new ProgressDialog(profile_user_page.this);
+        progressDialog.setTitle("Uploading " + vidCount + " videos");
+        progressDialog.show();
+
+        for (uploads=0; uploads < arrVideoList.size(); uploads++)
+        {
+            Uri Video  = arrVideoList.get(uploads);
+
+            long videoTime = System.currentTimeMillis();
+            String fileType = getfiletype(Video);
+            String videoName = videoTime + Video.getLastPathSegment().toString() + uploads + "." + fileType;
+
+            StorageReference videoRef = videoStorage.child(videoName);
+
+            videoRef.putFile(arrVideoList.get(uploads)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    videoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String url = String.valueOf(uri);
+                            SendVidLink(url, videoName);
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+
+    private void SendVidLink(String url, String videoName) {
+
+        Videos videos = new Videos(userID, url, videoName);
+
+        videoDatabase.push().setValue(videos).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                arrVideoList.clear();
+                Toast.makeText(profile_user_page.this, "Upload complete", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                Intent intent = new Intent(profile_user_page.this, profile_user_page.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void uploadPhotos(int imageCount) {
+
+        progressDialog = new ProgressDialog(profile_user_page.this);
+        progressDialog.setTitle("Uploading " + imageCount + " photos");
+        progressDialog.show();
+
+
+        for (uploads=0; uploads < arrImageList.size(); uploads++)
+        {
+            Uri Image  = arrImageList.get(uploads);
+
+            long imageTime = System.currentTimeMillis();
+            String imageName = imageTime + Image.getLastPathSegment().toString();
+
+            StorageReference imagename = photoStorage.child(imageName);
+
+            imagename.putFile(arrImageList.get(uploads)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    imagename.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String url = String.valueOf(uri);
+                            SendLink(url, imageName);
+                        }
+                    });
+
+                }
+            });
+
+        }
+
+    }
+
+    private void SendLink(String url, String imageName) {
+
+        Photos photos = new Photos(userID, url, imageName);
+
+        photoDatabase.push().setValue(photos).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                arrImageList.clear();
+                Toast.makeText(profile_user_page.this, "Upload complete", Toast.LENGTH_SHORT);
+                progressDialog.dismiss();
+                Intent intent = new Intent(profile_user_page.this, profile_user_page.class);
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    private String getfiletype(Uri videouri) {
+        ContentResolver r = getContentResolver();
+        // get the file type ,in this case its mp4
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(r.getType(videouri));
     }
 }
