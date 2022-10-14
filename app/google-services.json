@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "555188976416",
+    "firebase_url": "https://revic-d1db2-default-rtdb.firebaseio.com",
+    "project_id": "revic-d1db2",
+    "storage_bucket": "revic-d1db2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555188976416:android:6aa1800302f32e52af3545",
+        "android_client_info": {
+          "package_name": "com.example.revic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555188976416-d8grr4d3esg0r0i2mspdhb0oshi34sma.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWfZCYM2qwVNBHuhx4vDvzvS4IIHqKZ3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555188976416-d8grr4d3esg0r0i2mspdhb0oshi34sma.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555188976416:android:d628ba0e503730cbaf3545",
+        "android_client_info": {
+          "package_name": "com.example.revic_capstone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555188976416-d8grr4d3esg0r0i2mspdhb0oshi34sma.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWfZCYM2qwVNBHuhx4vDvzvS4IIHqKZ3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555188976416-d8grr4d3esg0r0i2mspdhb0oshi34sma.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
