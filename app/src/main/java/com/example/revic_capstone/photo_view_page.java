@@ -160,7 +160,7 @@ public class photo_view_page extends AppCompatActivity {
 
             @Override
             public void run() {
-                adapterPhotoView.notifyDataSetChanged();
+
                 vp_photoFullscreen.setCurrentItem(currentPosition);
             }
         }, 500);
@@ -185,6 +185,8 @@ public class photo_view_page extends AppCompatActivity {
                     imageName = photos.getPhotoName().toString();
                     arrUrl.add(photos);
                 }
+
+                adapterPhotoView.notifyDataSetChanged();
 
             }
 

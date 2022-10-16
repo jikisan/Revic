@@ -41,9 +41,10 @@ public class VideosFragment extends Fragment {
     private DatabaseReference userDatabase, videoDatabase;
     private FirebaseUser user;
 
-    private String userID;
+    private String userID, userIdFromSearch;
 
     private List<Videos> arrVideos = new ArrayList<Videos>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,9 +52,8 @@ public class VideosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_videos, container, false);
 
         videoDatabase = FirebaseDatabase.getInstance().getReference("Videos");
-
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+        userIdFromSearch = getActivity().getIntent().getStringExtra("userID");
 
         setRef(view);
         generateRecyclerLayout();
@@ -95,6 +95,15 @@ public class VideosFragment extends Fragment {
     }
 
     private void getViewHolderValues() {
+
+        if (userIdFromSearch != null) {
+            userID = userIdFromSearch;
+        }
+        else
+        {
+            userID = user.getUid();
+        }
+
 
         Query query = videoDatabase
                 .orderByChild("userID")

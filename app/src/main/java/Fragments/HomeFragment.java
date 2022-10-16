@@ -171,17 +171,20 @@ public class HomeFragment extends Fragment {
             recyclerView_searches.setAdapter(adapterUsersItem);
         }
 
-        adapterUsersItem.setOnItemClickListener(new AdapterUsersItem.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
+        if(adapterUsersItem != null)
+        {
+            adapterUsersItem.setOnItemClickListener(new AdapterUsersItem.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
 
-                String userID = arr.get(position).getUsersId();
-                Intent intent = new Intent(getContext(), profile_page.class);
-                intent.putExtra("userID", userID);
-                startActivity(intent);
+                    String userID = arr.get(position).getUsersId();
+                    Intent intent = new Intent(getContext(), profile_page.class);
+                    intent.putExtra("userID", userID);
+                    startActivity(intent);
 
-            }
-        });
+                }
+            });
+        }
 
     }
 

@@ -61,14 +61,13 @@ public class profile_user_page extends AppCompatActivity {
     private TabLayout tab_layout;
     private ViewPager2 vp_viewPager2;
 
-    private StorageReference userStorage, photoStorage, videoStorage;
+    private StorageReference photoStorage, videoStorage;
     private FirebaseUser user;
     private DatabaseReference userDatabase, photoDatabase, videoDatabase;
 
     private String userID;
     private int uploads = 0;
 
-    private ArrayList<Users> arrUsers = new ArrayList<>();
     private ArrayList<Uri> arrImageList = new ArrayList<Uri>();
     private ArrayList<Uri> arrVideoList = new ArrayList<Uri>();
 

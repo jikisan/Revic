@@ -40,19 +40,21 @@ public class PhotosFragment extends Fragment {
     private DatabaseReference userDatabase, photoDatabase;
     private FirebaseUser user;
 
-    private String userID;
+    private String userID, userIdFromSearch;
 
     private List<Photos> arrPhotos = new ArrayList<Photos>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
 
-        photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
 
+        photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+        userIdFromSearch = getActivity().getIntent().getStringExtra("userID");
+
 
         setRef(view);
         generateRecyclerLayout();
@@ -90,6 +92,16 @@ public class PhotosFragment extends Fragment {
     }
 
     private void getViewHolderValues() {
+
+        if (userIdFromSearch != null) {
+            userID = userIdFromSearch;
+        }
+        else
+        {
+            userID = user.getUid();
+        }
+
+
 
         Query query = photoDatabase
                 .orderByChild("userID")

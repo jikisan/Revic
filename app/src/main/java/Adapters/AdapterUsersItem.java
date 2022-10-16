@@ -52,8 +52,10 @@ public class AdapterUsersItem extends RecyclerView.Adapter<AdapterUsersItem.Item
         textModifier.setSentenceCase(users.getLname());
         String lName = textModifier.getSentenceCase();
 
+        String category = users.getCategory();
 
         holder.tv_userFullName.setText(fName + " " + lName);
+        holder.tv_userCategory.setText(category );
 
         if(!imageUrl.isEmpty())
         {
@@ -80,16 +82,14 @@ public class AdapterUsersItem extends RecyclerView.Adapter<AdapterUsersItem.Item
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView iv_userProfile;
-        private TextView tv_userFullName, tv_userRating;
-        private RatingBar rb_userRating;
+        private TextView tv_userFullName, tv_userCategory;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             iv_userProfile = itemView.findViewById(R.id.iv_userProfile);
             tv_userFullName = itemView.findViewById(R.id.tv_userFullName);
-            tv_userRating = itemView.findViewById(R.id.tv_userRating);
-            rb_userRating = itemView.findViewById(R.id.rb_userRating);
+            tv_userCategory = itemView.findViewById(R.id.tv_userCategory);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
