@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.revic_capstone.R;
+import com.example.revic_capstone.change_password_page;
 import com.example.revic_capstone.intro_logo;
 import com.example.revic_capstone.profile_page;
 import com.example.revic_capstone.profile_user_page;
@@ -106,9 +107,34 @@ public class ProfileFragment extends Fragment {
         tv_editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Edit profile clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Edit Profile coming soon", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        tv_changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), change_password_page.class);
+                intent.putExtra("User Email", user.getEmail());
+                startActivity(intent);
+            }
+        });
+
+        tv_aboutUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "About us coming soon.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        tv_privacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Privacy policy coming soon", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         tv_logout.setOnClickListener(new View.OnClickListener() {
             @Override
