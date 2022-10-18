@@ -52,7 +52,7 @@ public class profile_user_page extends AppCompatActivity {
 
     private ExtendedFloatingActionButton btn_post;
     private FloatingActionButton btn_addPhotos, btn_addVideos;
-    private TextView tv_addVidText, tv_addPhotoText, tv_userName;
+    private TextView tv_addVidText, tv_addPhotoText, tv_userName, tv_category;
     private LinearLayout backBtn;
     private fragmentAdapter adapter;
     private ImageView iv_userPhoto;
@@ -116,8 +116,10 @@ public class profile_user_page extends AppCompatActivity {
 
                     textModifier.setSentenceCase(users.getLname());
                     String lname = textModifier.getSentenceCase();
+                    String category = users.getCategory();
 
                     tv_userName.setText(fname + " " + lname);
+                    tv_category.setText(category);
 
                     Picasso.get()
                             .load(imageUrl)
@@ -270,6 +272,7 @@ public class profile_user_page extends AppCompatActivity {
         tv_addVidText = findViewById(R.id.tv_addVidText);
         tv_addPhotoText = findViewById(R.id.tv_addPhotoText);
         tv_userName = findViewById(R.id.tv_userName);
+        tv_category = findViewById(R.id.tv_category);
 
         tab_layout = findViewById(R.id.tab_layout);
         vp_viewPager2 = findViewById(R.id.vp_viewPager2);

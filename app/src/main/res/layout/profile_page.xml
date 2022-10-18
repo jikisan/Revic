@@ -61,10 +61,14 @@
             android:layout_marginTop="8dp"
             android:text="loading"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/iv_userPhoto"
-            app:layout_constraintStart_toStartOf="@+id/iv_userPhoto"
-            app:layout_constraintTop_toBottomOf="@+id/iv_userPhoto" />
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="loading"
+            android:textSize="12sp"/>
 
         <LinearLayout
             android:id="@+id/linearLayout5"
@@ -214,12 +218,29 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="4dp"
             android:layout_weight="50"
+            android:visibility="visible"
             android:background="@drawable/rounded5"
             android:backgroundTint="@color/dark_orange"
             android:gravity="center"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:text="Connect"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_disconnectBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_weight="50"
+            android:visibility="gone"
+            android:background="@drawable/rounded5"
+            android:backgroundTint="@color/red_btn_bg_pressed_color"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="Disconnect"
             android:textColor="@color/white"
             android:textStyle="bold" />
 
@@ -245,6 +266,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
@@ -257,10 +279,45 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingBottom="60dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+
+    <LinearLayout
+        android:id="@+id/event_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Events"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_eventRv"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/tv_noEvents"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="No Events"/>
+
+    </LinearLayout>
 
 
 

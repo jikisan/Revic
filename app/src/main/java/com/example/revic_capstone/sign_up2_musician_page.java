@@ -54,6 +54,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class sign_up2_musician_page extends AppCompatActivity {
 
     private String category, password, username, gender;
+    private int connections = 0;
 
     private TextView textView, tv_date, tv_addValidID, tv_signIn;
     private EditText et_firstName, et_lastName, et_contactNumber, et_company;
@@ -403,7 +404,7 @@ public class sign_up2_musician_page extends AppCompatActivity {
                                   String contactNum, String dob, String company, String
                                           userPicName, String validIdName, String userPicUrl, String validIdUrl) {
 
-        Users users = new Users(userID, username, password, userPicUrl, userPicName, firstName, lastName, contactNum, dob, gender, validIdUrl, validIdName, company, category);
+        Users users = new Users(userID, username, password, userPicUrl, userPicName, firstName, lastName, contactNum, dob, gender, validIdUrl, validIdName, company, category, connections);
 
         userDatabase.child(userID).setValue(users).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

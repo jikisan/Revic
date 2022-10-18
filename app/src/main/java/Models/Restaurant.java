@@ -4,13 +4,15 @@ public class Restaurant {
 
     String UsersId, Email, Password, ImageUrl, ImageName, Establishment, Fname, Lname,
             ContactNum, DOE, ValidIdUrl, ValidIdName, Category;
+    int connections;
 
     public Restaurant() {
     }
 
-    public Restaurant(String usersId, String email, String password, String imageUrl, String imageName,
-                      String establishment, String fname, String lname, String contactNum, String DOE,
-                      String validIdUrl, String validIdName, String category) {
+    public Restaurant(String usersId, String email, String password, String imageUrl,
+                      String imageName, String establishment, String fname, String lname,
+                      String contactNum, String DOE, String validIdUrl, String validIdName,
+                      String category, int connections) {
         UsersId = usersId;
         Email = email;
         Password = password;
@@ -24,6 +26,7 @@ public class Restaurant {
         ValidIdUrl = validIdUrl;
         ValidIdName = validIdName;
         Category = category;
+        this.connections = connections;
     }
 
     public String getUsersId() {
@@ -128,5 +131,13 @@ public class Restaurant {
 
     public void setCategory(String category) {
         Category = category;
+    }
+
+    public int getConnections() {
+        return connections;
+    }
+
+    public void setConnections(int connections) {
+        this.connections = connections;
     }
 }

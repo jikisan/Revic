@@ -51,6 +51,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class sign_up2_restaurant_page extends AppCompatActivity {
 
     private String category, password, username;
+    private int connections = 0;
 
     private TextView textView, tv_date, tv_addValidID, tv_signIn;
     private ImageView iv_addPhoto, iv_userPhoto, iv_validID;
@@ -298,7 +299,7 @@ public class sign_up2_restaurant_page extends AppCompatActivity {
                                           userPicName, String validIdName, String userPicUrl, String validIdUrl) {
 
         String gender = "N/A";
-        Restaurant restaurant = new Restaurant(userID, username, password, userPicUrl, userPicName, nameOfEst, firstName, lastName, contactNum, dob, validIdUrl, validIdName, category);
+        Restaurant restaurant = new Restaurant(userID, username, password, userPicUrl, userPicName, nameOfEst, firstName, lastName, contactNum, dob, validIdUrl, validIdName, category, connections);
 
         userDatabase.child(userID).setValue(restaurant).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
