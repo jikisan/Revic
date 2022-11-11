@@ -228,14 +228,13 @@ public class PostEventsFragment extends Fragment {
         else if (TextUtils.isEmpty(eventDescription)){
             Toast.makeText(getContext(), "Event description is required", Toast.LENGTH_SHORT).show();
         }
-        else
-        {
+        else{
             new AlertDialog.Builder(getContext())
                     .setIcon(R.drawable.revic_logo2)
                     .setTitle("Almost there!")
                     .setMessage("Please make sure all information entered are correct")
                     .setCancelable(true)
-                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Post", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -297,7 +296,7 @@ public class PostEventsFragment extends Fragment {
                                     SweetAlertDialog pdialog;
                                     pdialog = new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE);
                                     pdialog.setTitleText("Event Successfully Added!");
-                                    pdialog.setContentText("The service has been \nsuccessfully added for Admin review");
+                                    pdialog.setContentText("Event has been \nsuccessfully added for Admin review");
                                     pdialog.setConfirmButton("Proceed", new SweetAlertDialog.OnSweetClickListener() {
                                         @Override
                                         public void onClick(SweetAlertDialog sweetAlertDialog) {
