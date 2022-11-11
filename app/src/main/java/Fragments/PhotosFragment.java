@@ -55,6 +55,15 @@ public class PhotosFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userIdFromSearch = getActivity().getIntent().getStringExtra("userID");
 
+        if (userIdFromSearch != null) {
+
+            userID = userIdFromSearch;
+        }
+        else
+        {
+            userID = user.getUid();
+        }
+
 
         setRef(view);
         generateRecyclerLayout();
@@ -65,19 +74,19 @@ public class PhotosFragment extends Fragment {
 
     private void clickListeners() {
 
-        adapterPhotoItem.setOnItemClickListener(new AdapterPhotoItem.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-
-                Toast.makeText(getActivity(), "Position: " + position, Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(getActivity(), photo_view_page.class);
-                intent.putExtra("userID", userID);
-                intent.putExtra("current position", position);
-                intent.putExtra("category", "add");
-                startActivity(intent);
-            }
-        });
+//        adapterPhotoItem.setOnItemClickListener(new AdapterPhotoItem.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position) {
+//
+//                Toast.makeText(getActivity(), "Position: " + position, Toast.LENGTH_SHORT).show();
+//
+//                Intent intent = new Intent(getActivity(), photo_view_page.class);
+//                intent.putExtra("userID1", userIdFromSearch);
+//                intent.putExtra("current position", position);
+//                intent.putExtra("category", "add");
+//                startActivity(intent);
+//            }
+//        });
     }
 
     private void generateRecyclerLayout() {
@@ -85,22 +94,13 @@ public class PhotosFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false);
         rv_photos.setLayoutManager(gridLayoutManager);
 
-        adapterPhotoItem = new AdapterPhotoItem(arrPhotos);
+        adapterPhotoItem = new AdapterPhotoItem(arrPhotos, userIdFromSearch);
         rv_photos.setAdapter(adapterPhotoItem);
 
         getViewHolderValues();
     }
 
     private void getViewHolderValues() {
-
-        if (userIdFromSearch != null) {
-            userID = userIdFromSearch;
-        }
-        else
-        {
-            userID = user.getUid();
-        }
-
 
 
         Query query = photoDatabase

@@ -148,38 +148,56 @@ public class login_page extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                                if(user.isEmailVerified())
-                                {
-                                    Toast.makeText(login_page.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(login_page.this, "Login Successfully", Toast.LENGTH_SHORT).show();
 
-                                    if(!(userType == null))
+                                if(!(userType == null))
+                                {
+                                    if(userType.equals("guest"))
                                     {
-                                        if(userType.equals("guest"))
-                                        {
-                                            Toast.makeText(login_page.this, "Guest Login", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else
-                                        {
-                                            startActivity(new Intent(getApplicationContext(), homepage.class));
-                                        }
+                                        Toast.makeText(login_page.this, "Guest Login", Toast.LENGTH_SHORT).show();
                                     }
                                     else
                                     {
                                         startActivity(new Intent(getApplicationContext(), homepage.class));
                                     }
-
                                 }
                                 else
                                 {
-                                    user.sendEmailVerification();
-
-                                    Toast.makeText(login_page.this, "Please check your email to verify your account.", Toast.LENGTH_SHORT).show();
-                                    new SweetAlertDialog(login_page.this, SweetAlertDialog.ERROR_TYPE)
-                                            .setTitleText("Account not verified.")
-                                            .setContentText("Please check your email " +
-                                                    "\nto verify your account.")
-                                            .show();
+                                    startActivity(new Intent(getApplicationContext(), homepage.class));
                                 }
+
+//                                if(user.isEmailVerified())
+//                                {
+//                                    Toast.makeText(login_page.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+//
+//                                    if(!(userType == null))
+//                                    {
+//                                        if(userType.equals("guest"))
+//                                        {
+//                                            Toast.makeText(login_page.this, "Guest Login", Toast.LENGTH_SHORT).show();
+//                                        }
+//                                        else
+//                                        {
+//                                            startActivity(new Intent(getApplicationContext(), homepage.class));
+//                                        }
+//                                    }
+//                                    else
+//                                    {
+//                                        startActivity(new Intent(getApplicationContext(), homepage.class));
+//                                    }
+//
+//                                }
+//                                else
+//                                {
+//                                    user.sendEmailVerification();
+//
+//                                    Toast.makeText(login_page.this, "Please check your email to verify your account.", Toast.LENGTH_SHORT).show();
+//                                    new SweetAlertDialog(login_page.this, SweetAlertDialog.ERROR_TYPE)
+//                                            .setTitleText("Account not verified.")
+//                                            .setContentText("Please check your email " +
+//                                                    "\nto verify your account.")
+//                                            .show();
+//                                }
 
                             } else {
                                 Toast.makeText(login_page.this, "Incorrect Password", Toast.LENGTH_SHORT).show();

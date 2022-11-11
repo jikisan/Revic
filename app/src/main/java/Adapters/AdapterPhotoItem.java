@@ -25,13 +25,15 @@ public class AdapterPhotoItem extends RecyclerView.Adapter<AdapterPhotoItem.Item
     private List<Photos> arr;
     private OnItemClickListener onItemClickListener;
     private FirebaseUser user;
+    private String userIdFromSearch, userID;
 
 
     public AdapterPhotoItem() {
     }
 
-    public AdapterPhotoItem(List<Photos> arr) {
+    public AdapterPhotoItem(List<Photos> arr, String userIdFromSearch) {
         this.arr = arr;
+        this.userIdFromSearch = userIdFromSearch;
     }
 
     @NonNull
@@ -45,7 +47,15 @@ public class AdapterPhotoItem extends RecyclerView.Adapter<AdapterPhotoItem.Item
     public void onBindViewHolder(@NonNull AdapterPhotoItem.ItemViewHolder holder, int position) {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        String userID = user.getUid();
+
+        if (userIdFromSearch != null) {
+
+            userID = userIdFromSearch;
+        }
+        else
+        {
+            userID = user.getUid();
+        }
 
         Photos photos = arr.get(position);
 

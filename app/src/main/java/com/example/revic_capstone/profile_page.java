@@ -186,10 +186,11 @@ public class profile_page extends AppCompatActivity {
                         String user1 = connections.getUser1();
                         String user2 = connections.getUser2();
 
-                        if(userID.equals(user1) || userID.equals(user2) )
+                        if(userID.equals(user1) && userIdFromSearch.equals(user2) || userID.equals(user2) && userIdFromSearch.equals(user1) )
                         {
                             tv_connectBtn.setVisibility(View.GONE);
                             tv_disconnectBtn.setVisibility(View.VISIBLE);
+                            break;
                         }
 
                     }

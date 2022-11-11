@@ -68,10 +68,10 @@ public class MessagesFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
 
-                arrChat.get(position);
+                String clickedChatId = arrChat.get(position).getChatID();
 
                 Intent intent = new Intent(getActivity(), chat_activity.class);
-                intent.putExtra("chatId", chatId);
+                intent.putExtra("chatId", clickedChatId);
                 intent.putExtra("userIdFromSearch", userTwo);
                 startActivity(intent);
             }

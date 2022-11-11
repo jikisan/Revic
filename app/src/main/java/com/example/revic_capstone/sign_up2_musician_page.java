@@ -414,7 +414,7 @@ public class sign_up2_musician_page extends AppCompatActivity {
                 {
                     progressDialog.dismiss();
                     fAuth.signOut();
-                    user.sendEmailVerification();
+//                    user.sendEmailVerification();
 
                     new SweetAlertDialog(sign_up2_musician_page.this, SweetAlertDialog.SUCCESS_TYPE)
                             .setTitleText("Account Created.")

@@ -10,8 +10,8 @@
         android:icon="@drawable/messages"/>
 
     <item android:id="@+id/event"
-        android:title="Events"
-        android:icon="@drawable/mic_logo"/>
+        android:title="Post"
+        android:icon="@drawable/add_box"/>
 
     <item android:id="@+id/notification"
         android:title="Notification"

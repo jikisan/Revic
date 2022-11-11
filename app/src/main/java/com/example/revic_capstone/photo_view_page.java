@@ -37,7 +37,7 @@ public class photo_view_page extends AppCompatActivity {
     private AdapterPhotoView adapterPhotoView;
     private List<Photos> arrUrl = new ArrayList<Photos>();
 
-    private String userID, category, imageName;
+    private String userID, category, imageName, userIdFromSearch;
     private int currentPosition;
 
     private DatabaseReference photoDatabase;
@@ -54,12 +54,22 @@ public class photo_view_page extends AppCompatActivity {
         setContentView(R.layout.photo_view_page);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+
 
         currentPosition = getIntent().getIntExtra("current position", 0);
         category = getIntent().getStringExtra("category");
+        userIdFromSearch = getIntent().getStringExtra("userID");
 
         photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
+
+        if (userIdFromSearch != null) {
+
+            userID = userIdFromSearch;
+        }
+        else
+        {
+            userID = user.getUid();
+        }
 
         setRef();
         generateImageData();
