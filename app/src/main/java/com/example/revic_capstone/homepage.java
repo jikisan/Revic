@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import Fragments.HomeFragmentForRestAndEO;
 import Fragments.PostEventsFragment;
 import Fragments.PostPhotosAndVidFragment;
 import Fragments.HomeFragment;
@@ -34,6 +35,7 @@ public class homepage extends AppCompatActivity {
     private String userID, category;
 
     HomeFragment homeFragment = new HomeFragment();
+    HomeFragmentForRestAndEO homeFragmentForRestAndEO = new HomeFragmentForRestAndEO();
     PostPhotosAndVidFragment postPhotosAndVidFragment = new PostPhotosAndVidFragment();
     PostEventsFragment postEventsFragment = new PostEventsFragment();
     NotificationFragment notificationFragment = new NotificationFragment();
@@ -50,13 +52,11 @@ public class homepage extends AppCompatActivity {
 
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
-
         bottomNavigationView = findViewById(R.id.bottom_nav);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
 
         generateCategory();
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
 
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -66,6 +66,7 @@ public class homepage extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.home:
+
                         getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
                         return true;
 
@@ -94,6 +95,8 @@ public class homepage extends AppCompatActivity {
                     case R.id.messages:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container,messagesFragment).commit();
                         return true;
+                    default:
+
 
                 }
                 return false;

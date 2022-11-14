@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/iv_eventPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/lightGrey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/dark_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_eventPhoto" />
+
+    <TextView
+        android:id="@+id/tv_eventName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:maxHeight="23sp"
+        android:text="Wanted Guitarist"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/btn_viewEvent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/iv_eventPhoto" />
+
+
+    <TextView
+        android:id="@+id/tv_pending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Pending"
+        android:textColor="@color/duskYellow"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/tv_eventName"
+        app:layout_constraintTop_toBottomOf="@+id/tv_eventName" />
+
+    <TextView
+        android:id="@+id/tv_accepted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Accepted"
+        android:textColor="@color/main_green_color"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/tv_eventName"
+        app:layout_constraintTop_toBottomOf="@+id/tv_eventName" />
+
+    <TextView
+        android:id="@+id/tv_declined"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Declined"
+        android:textColor="@color/red_btn_bg_color"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/tv_eventName"
+        app:layout_constraintTop_toBottomOf="@+id/tv_eventName" />
+
+    <TextView
+        android:id="@+id/tv_ongoing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Ongoing"
+        android:textColor="@color/light_orange"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/tv_eventName"
+        app:layout_constraintTop_toBottomOf="@+id/tv_eventName" />
+
+
+
+
+
+    <Button
+        android:id="@+id/btn_viewEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded100"
+        android:text="view"
+        android:textStyle="bold"
+        app:backgroundTint="@color/light_orange"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/iv_eventPhoto" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

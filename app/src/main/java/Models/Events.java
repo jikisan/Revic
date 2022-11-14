@@ -6,13 +6,7 @@ public class Events {
     private String imageUrl;
     private String eventName;
     private String eventAddress;
-    private boolean isAvailableMon;
-    private boolean isAvailableTue;
-    private boolean isAvailableWed;
-    private boolean isAvailableThu;
-    private boolean isAvailableFri;
-    private boolean isAvailableSat;
-    private boolean isAvailableSun;
+    private String eventDateSched;
     private String timeStart;
     private String timeEnd;
     private String eventDescription;
@@ -20,27 +14,24 @@ public class Events {
     private String timeCreated;
     private String dateCreated;
     private int ratings;
+    private String latitude;
+    private String longitude;
+    private int applicants;
     private String userID;
 
     public Events() {
+
     }
 
-    public Events(String imageName, String imageUrl, String eventName, String eventAddress, boolean isAvailableMon,
-                  boolean isAvailableTue, boolean isAvailableWed, boolean isAvailableThu, boolean isAvailableFri,
-                  boolean isAvailableSat, boolean isAvailableSun, String timeStart, String timeEnd, String eventDescription,
-                  long dateTimeInMillis, String timeCreated, String dateCreated, int ratings, String userID) {
-
+    public Events(String imageName, String imageUrl, String eventName, String eventAddress,
+                  String eventDateSched, String timeStart, String timeEnd, String eventDescription,
+                  long dateTimeInMillis, String timeCreated, String dateCreated, int ratings,
+                  String latitude, String longitude, int applicants, String userID) {
         this.imageName = imageName;
         this.imageUrl = imageUrl;
         this.eventName = eventName;
         this.eventAddress = eventAddress;
-        this.isAvailableMon = isAvailableMon;
-        this.isAvailableTue = isAvailableTue;
-        this.isAvailableWed = isAvailableWed;
-        this.isAvailableThu = isAvailableThu;
-        this.isAvailableFri = isAvailableFri;
-        this.isAvailableSat = isAvailableSat;
-        this.isAvailableSun = isAvailableSun;
+        this.eventDateSched = eventDateSched;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.eventDescription = eventDescription;
@@ -48,8 +39,13 @@ public class Events {
         this.timeCreated = timeCreated;
         this.dateCreated = dateCreated;
         this.ratings = ratings;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.applicants = applicants;
         this.userID = userID;
     }
+
+
 
     public String getImageName() {
         return imageName;
@@ -83,60 +79,12 @@ public class Events {
         this.eventAddress = eventAddress;
     }
 
-    public boolean isAvailableMon() {
-        return isAvailableMon;
+    public String getEventDateSched() {
+        return eventDateSched;
     }
 
-    public void setAvailableMon(boolean availableMon) {
-        isAvailableMon = availableMon;
-    }
-
-    public boolean isAvailableTue() {
-        return isAvailableTue;
-    }
-
-    public void setAvailableTue(boolean availableTue) {
-        isAvailableTue = availableTue;
-    }
-
-    public boolean isAvailableWed() {
-        return isAvailableWed;
-    }
-
-    public void setAvailableWed(boolean availableWed) {
-        isAvailableWed = availableWed;
-    }
-
-    public boolean isAvailableThu() {
-        return isAvailableThu;
-    }
-
-    public void setAvailableThu(boolean availableThu) {
-        isAvailableThu = availableThu;
-    }
-
-    public boolean isAvailableFri() {
-        return isAvailableFri;
-    }
-
-    public void setAvailableFri(boolean availableFri) {
-        isAvailableFri = availableFri;
-    }
-
-    public boolean isAvailableSat() {
-        return isAvailableSat;
-    }
-
-    public void setAvailableSat(boolean availableSat) {
-        isAvailableSat = availableSat;
-    }
-
-    public boolean isAvailableSun() {
-        return isAvailableSun;
-    }
-
-    public void setAvailableSun(boolean availableSun) {
-        isAvailableSun = availableSun;
+    public void setEventDateSched(String eventDateSched) {
+        this.eventDateSched = eventDateSched;
     }
 
     public String getTimeStart() {
@@ -193,6 +141,30 @@ public class Events {
 
     public void setRatings(int ratings) {
         this.ratings = ratings;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public int getApplicants() {
+        return applicants;
+    }
+
+    public void setApplicants(int applicants) {
+        this.applicants = applicants;
     }
 
     public String getUserID() {

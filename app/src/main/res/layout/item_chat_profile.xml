@@ -52,8 +52,6 @@
             app:layout_constraintStart_toStartOf="@+id/tv_chatName"
             app:layout_constraintTop_toBottomOf="@+id/tv_chatName" />
 
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView

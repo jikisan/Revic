@@ -90,8 +90,6 @@ public class PostPhotosAndVidFragment extends Fragment {
         return view;
     }
 
-
-
     private void clickListeners() {
 
         btn_postFloating.setOnClickListener(new View.OnClickListener() {

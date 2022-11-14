@@ -237,7 +237,6 @@ public class profile_page extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
-                        Toast.makeText(profile_page.this, "Connected", Toast.LENGTH_LONG).show();
 
                         int i = 1;
                         updateConnectionsInDB(i);
@@ -327,6 +326,9 @@ public class profile_page extends AppCompatActivity {
         HashMap<String, Object> hashMapMyConnections = new HashMap<String, Object>();
         hashMapMyConnections.put("connections", myConnectionsNewValue);
         userDatabase.child(userID).updateChildren(hashMapMyConnections);
+
+
+        Toast.makeText(profile_page.this, "Connected", Toast.LENGTH_LONG).show();
     }
 
     private void validatePrevChatExistence() {

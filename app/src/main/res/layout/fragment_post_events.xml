@@ -152,81 +152,54 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_address" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroup"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textView42"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:text="Date: "
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_dateSched"
+                app:layout_constraintEnd_toStartOf="@+id/tv_dateSched"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView35">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Mon"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mon" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Tue"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tue" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Wed"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wed" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Thu"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thu" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Fri"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fri" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Sat"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sat" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chip_Sun"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sun" />
+                app:layout_constraintTop_toTopOf="@+id/tv_dateSched" />
 
 
-            </com.google.android.material.chip.ChipGroup>
+            <TextView
+                android:id="@+id/tv_dateSched"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rounded5"
+                android:gravity="center"
+                android:hint="Jan, 00"
+                android:paddingLeft="16dp"
+                android:paddingTop="5dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="5dp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/textView35"
+                app:layout_constraintTop_toBottomOf="@+id/textView35" />
 
             <TextView
                 android:id="@+id/textView38"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
                 android:text="Time Start: "
                 android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_startTime"
+                app:layout_constraintEnd_toStartOf="@+id/tv_startTime"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+                app:layout_constraintTop_toTopOf="@+id/tv_startTime" />
 
             <TextView
                 android:id="@+id/tv_startTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/rounded5"
                 android:gravity="center"
                 android:hint="00:00 AM"
@@ -235,9 +208,8 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="5dp"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView38"
-                app:layout_constraintStart_toEndOf="@+id/textView38"
-                app:layout_constraintTop_toTopOf="@+id/textView38" />
+                app:layout_constraintStart_toStartOf="@+id/tv_dateSched"
+                app:layout_constraintTop_toBottomOf="@+id/tv_dateSched" />
 
 
             <TextView
@@ -246,14 +218,17 @@
                 android:layout_height="wrap_content"
                 android:text="Time End: "
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView38"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_endTime"
                 app:layout_constraintEnd_toStartOf="@+id/tv_endTime"
-                app:layout_constraintTop_toTopOf="@+id/textView38" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_endTime" />
 
             <TextView
                 android:id="@+id/tv_endTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/rounded5"
                 android:gravity="center"
                 android:hint="00:00 AM"
@@ -262,20 +237,20 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="5dp"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView39"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView39" />
+                app:layout_constraintStart_toEndOf="@+id/textView38"
+                app:layout_constraintStart_toStartOf="@+id/tv_startTime"
+                app:layout_constraintTop_toBottomOf="@+id/tv_startTime" />
 
             <TextView
                 android:id="@+id/textView41"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:text="Event Description"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView39" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_endTime" />
 
             <EditText
                 android:id="@+id/et_specialInstruction"

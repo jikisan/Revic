@@ -5,8 +5,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.example.revic_capstone.R;
 import com.example.revic_capstone.profile_page;
 import com.example.revic_capstone.profile_user_page;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +33,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import Adapters.AdapterUsersItem;
+import Adapters.fragmentAdapsterHomepage;
+import Adapters.fragmentAdapter;
 import Models.Users;
 import Objects.TextModifier;
 
@@ -38,6 +43,10 @@ public class HomeFragment extends Fragment {
     private SearchView sv_search;
     private RecyclerView recyclerView_searches;
     private ImageView iv_bannerPhoto;
+    private fragmentAdapsterHomepage adapter;
+
+    private TabLayout tab_layout;
+    private ViewPager2 vp_viewPager2;
 
     private ArrayList<Users> arrUsers, arr;
 
@@ -60,6 +69,7 @@ public class HomeFragment extends Fragment {
 
         setRef(view);
         generateUserData();
+        generateTabLayout(view);
         generateRecyclerLayout();
         clickListeners();
 
@@ -78,7 +88,6 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
-
 
 
     private void generateUserData() {
@@ -146,11 +155,53 @@ public class HomeFragment extends Fragment {
 
     }
 
+    private void generateTabLayout(View view) {
+
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.events));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.connected));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.applied));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.rated));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.near_me));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.my_application));
+
+        FragmentManager fragmentManager = getChildFragmentManager();
+        adapter = new fragmentAdapsterHomepage(fragmentManager, getLifecycle());
+        vp_viewPager2.setSaveEnabled(false);
+        vp_viewPager2.setAdapter(adapter);
+
+        tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                vp_viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        vp_viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tab_layout.selectTab(tab_layout.getTabAt(position));
+            }
+        });
+    }
+
     private void setRef(View view) {
 
         iv_bannerPhoto = view.findViewById(R.id.iv_bannerPhoto);
         sv_search = view.findViewById(R.id.sv_search);
         recyclerView_searches = view.findViewById(R.id.recyclerView_searches);
+
+        tab_layout = view.findViewById(R.id.tab_layout);
+        vp_viewPager2 = view.findViewById(R.id.vp_viewPager2);
     }
 
     private void search(String s) {

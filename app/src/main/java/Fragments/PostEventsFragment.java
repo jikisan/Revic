@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,9 +69,8 @@ public class PostEventsFragment extends Fragment {
 
     private Button btn_post;
     private ImageView iv_eventBannerPhoto;
-    private TextView tv_uploadPhoto, tv_startTime, tv_endTime, tv_address, tv_back;
+    private TextView tv_uploadPhoto, tv_startTime, tv_endTime, tv_address, tv_back, tv_dateSched;
     private EditText et_projectName, et_specialInstruction;
-    private Chip chip_Mon, chip_Tue, chip_Wed, chip_Thu, chip_Fri, chip_Sat, chip_Sun;
 
     private Uri imageUri;
     private Geocoder geocoder;
@@ -77,13 +78,6 @@ public class PostEventsFragment extends Fragment {
     private static final int PLACE_PICKER_REQUEST = 1;
     private static final int EVENT_PIC = 3;
 
-    private boolean isAvailableMon = false;
-    private boolean isAvailableTue = false;
-    private boolean isAvailableWed = false;
-    private boolean isAvailableThu = false;
-    private boolean isAvailableFri = false;
-    private boolean isAvailableSat = false;
-    private boolean isAvailableSun = false;
 
     private FirebaseUser user;
     private DatabaseReference eventDatabase;
@@ -92,6 +86,7 @@ public class PostEventsFragment extends Fragment {
     private String userID, latLng, latString, longString, timeCreated, dateCreated;
     private long dateTimeInMillis;
     private int hour, minute;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,6 +130,39 @@ public class PostEventsFragment extends Fragment {
 
                 //Start Activity result
                 startActivityForResult(intent, 100);
+
+            }
+        });
+
+        tv_dateSched.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR);
+                int mMonth = c.get(Calendar.MONTH);
+                int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+
+                        month = month+1;
+                        SimpleDateFormat simpledateformat = new SimpleDateFormat("EEE");
+                        Date dateOfWeek = new Date(year, month, day-1);
+                        String dayOfWeek = simpledateformat.format(dateOfWeek);
+
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd-yyyy");
+                        calendar.set(year, month, day);
+                        dateCreated = sdf.format(calendar.getTime());
+
+                        tv_dateSched.setText(dateCreated  + "-" + dayOfWeek);
+                    }
+                }, mYear, mMonth, mDay);
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() + 1*24*60*60*1000);
+                datePickerDialog.show();
 
             }
         });
@@ -215,10 +243,6 @@ public class PostEventsFragment extends Fragment {
         else if (TextUtils.isEmpty(eventAddress)){
             Toast.makeText(getContext(), "Event address is required", Toast.LENGTH_SHORT).show();
         }
-        else if(!chip_Mon.isChecked() && !chip_Tue.isChecked() && !chip_Wed.isChecked() && !chip_Thu.isChecked()
-                && !chip_Fri.isChecked() && !chip_Sat.isChecked() && !chip_Sun.isChecked()){
-            Toast.makeText(getContext(), "Event schedule is required", Toast.LENGTH_SHORT).show();
-        }
         else if (TextUtils.isEmpty(time_start)){
             Toast.makeText(getContext(), "Starting time is required", Toast.LENGTH_SHORT).show();
         }
@@ -266,11 +290,13 @@ public class PostEventsFragment extends Fragment {
 
         String eventName = et_projectName.getText().toString();
         String eventAddress = tv_address.getText().toString();
+        String eventDateSched = tv_dateSched.getText().toString();
         String time_start = tv_startTime.getText().toString();
         String time_end = tv_endTime.getText().toString();
         String eventDescription = et_specialInstruction.getText().toString();
         String imageName = imageUri.getLastPathSegment();
         int rating = 0;
+        int applicants = 0;
 
         fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -280,11 +306,9 @@ public class PostEventsFragment extends Fragment {
                     @Override
                     public void onSuccess(Uri uri) {
                         final String imageUrl = uri.toString();
-                        chipsValidation();
 
-                        Events events = new Events(imageName, imageUrl, eventName, eventAddress, isAvailableMon, isAvailableTue, isAvailableWed,
-                                isAvailableThu, isAvailableFri, isAvailableSat, isAvailableSun, time_start, time_end, eventDescription,
-                                dateTimeInMillis, timeCreated, dateCreated, rating, userID);
+                        Events events = new Events(imageName, imageUrl, eventName, eventAddress, eventDateSched, time_start, time_end, eventDescription,
+                                dateTimeInMillis, timeCreated, dateCreated, rating, latString, longString, applicants, userID);
 
                         eventDatabase.push().setValue(events).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -334,13 +358,6 @@ public class PostEventsFragment extends Fragment {
         imageUri = null;
         et_projectName.setText("");
         tv_address.setText("");
-        chip_Mon.setChecked(false);
-        chip_Tue.setChecked(false);
-        chip_Wed.setChecked(false);
-        chip_Thu.setChecked(false);
-        chip_Fri.setChecked(false);
-        chip_Sat.setChecked(false);
-        chip_Sun.setChecked(false);
         tv_startTime.setText("");
         tv_endTime.setText("");
         et_specialInstruction.setText("");
@@ -372,6 +389,8 @@ public class PostEventsFragment extends Fragment {
             imageUri = data.getData();
 
             Picasso.get().load(imageUri)
+                    .fit()
+                    .centerCrop()
                     .into(iv_eventBannerPhoto);
         }
         else if(requestCode == 100 && resultCode == RESULT_OK){
@@ -412,14 +431,7 @@ public class PostEventsFragment extends Fragment {
         tv_uploadPhoto = view.findViewById(R.id.tv_uploadPhoto);
         tv_endTime = view.findViewById(R.id.tv_endTime);
         tv_back = view.findViewById(R.id.tv_back);
-
-        chip_Mon = view.findViewById(R.id.chip_Mon);
-        chip_Tue = view.findViewById(R.id.chip_Tue);
-        chip_Wed = view.findViewById(R.id.chip_Wed);
-        chip_Thu = view.findViewById(R.id.chip_Thu);
-        chip_Fri = view.findViewById(R.id.chip_Fri);
-        chip_Sat = view.findViewById(R.id.chip_Sat);
-        chip_Sun = view.findViewById(R.id.chip_Sun);
+        tv_dateSched = view.findViewById(R.id.tv_dateSched);
 
         Places.initialize(getContext(), getString(R.string.API_KEY));
         //Set edittext no focusable
@@ -427,39 +439,6 @@ public class PostEventsFragment extends Fragment {
 
     }
 
-    private void chipsValidation() {
-
-        if(chip_Mon.isChecked()){
-            isAvailableMon = true;
-        }
-
-        if(chip_Tue.isChecked()){
-            isAvailableTue = true;
-        }
-
-        if(chip_Wed.isChecked()){
-            isAvailableWed = true;
-        }
-
-        if(chip_Thu.isChecked()){
-            isAvailableThu = true;
-        }
-
-        if(chip_Fri.isChecked()){
-            isAvailableFri = true;
-        }
-
-        if(chip_Sat.isChecked()){
-            isAvailableSat = true;
-        }
-
-        if(chip_Sun.isChecked()){
-            isAvailableSun = true;
-        }
-
-
-
-    }
 
     private void PickImage() {
 

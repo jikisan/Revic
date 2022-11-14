@@ -88,8 +88,6 @@ public class profile_user_page extends AppCompatActivity {
         photoStorage = FirebaseStorage.getInstance().getReference("Photos").child(userID);
         videoStorage = FirebaseStorage.getInstance().getReference("Videos").child(userID);
 
-
-
         setRef();
         generateUserData();
         buttonActivity();
