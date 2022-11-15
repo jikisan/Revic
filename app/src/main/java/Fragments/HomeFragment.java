@@ -157,6 +157,7 @@ public class HomeFragment extends Fragment {
 
     private void generateTabLayout(View view) {
 
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.home));
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.events));
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.connected));
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.applied));

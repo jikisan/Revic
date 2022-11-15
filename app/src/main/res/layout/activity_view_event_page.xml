@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textColor="@color/light_orange"
+                    android:textColor="@color/dark_orange"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@+id/rb_userRating"
                     app:layout_constraintStart_toEndOf="@+id/rb_userRating" />
@@ -118,8 +118,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" Applicants"
-                    android:textColor="@color/light_orange"
+                    android:text=" applied for this event"
+                    android:textColor="@color/dark_orange"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@+id/rb_userRating"
                     app:layout_constraintStart_toEndOf="@+id/rb_userRating" />

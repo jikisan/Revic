@@ -62,7 +62,9 @@ public class PostPhotosAndVidFragment extends Fragment {
     public static final int PIC_ID = 3;
     public static final int VID_ID = 2;
 
-    private Boolean isAllFabsVisible, isVidAttached, isPhotoAttached;
+    private Boolean isAllFabsVisible;
+    private Boolean isVidAttached = false;
+    private Boolean isPhotoAttached = false;
     private String fileType, userID, timeCreated, dateCreated, fileName;
     private long dateTimeInMillis;
 
@@ -209,15 +211,6 @@ public class PostPhotosAndVidFragment extends Fragment {
         fileName = fileUri.getLastPathSegment();
         fileReference = postStorage.child(fileUri.getLastPathSegment());
 
-        if(isPhotoAttached = false)
-        {
-            fileType = "video";
-        }
-        else if(isVidAttached = false)
-        {
-            fileType = "photos";
-        }
-
         setUpDate();
 
         fileReference.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -228,6 +221,15 @@ public class PostPhotosAndVidFragment extends Fragment {
                     @Override
                     public void onSuccess(Uri uri) {
                         final String fileUrl = uri.toString();
+
+                        if(isPhotoAttached) {
+
+                            fileType = "photo";
+                        }
+                        else if(isVidAttached)
+                        {
+                            fileType = "video";
+                        }
 
                         Posts posts = new Posts(postMessage, fileUrl, fileName, fileType, dateTimeInMillis,
                                 timeCreated, dateCreated, ratings, userID);
@@ -271,6 +273,8 @@ public class PostPhotosAndVidFragment extends Fragment {
         iv_post.setImageDrawable(null);
         fileUri = null;
         btn_postBtn.setVisibility(View.GONE);
+        isPhotoAttached = false;
+        isVidAttached = false;
 
     }
 
@@ -288,6 +292,7 @@ public class PostPhotosAndVidFragment extends Fragment {
 
             btn_postBtn.setVisibility(View.VISIBLE);
             isVidAttached = false;
+            isPhotoAttached = true;
             buttonActivity();
 
         }
@@ -303,6 +308,7 @@ public class PostPhotosAndVidFragment extends Fragment {
 
             btn_postBtn.setVisibility(View.VISIBLE);
             isPhotoAttached = false;
+            isVidAttached = true;
             buttonActivity();
         }
 

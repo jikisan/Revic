@@ -101,7 +101,7 @@ public class MyApplicationFragment extends Fragment {
                     }
                 }
 
-                if(arrEvents.isEmpty())
+                if(arrEventsId.isEmpty())
                 {
                     recyclerView_users.setVisibility(View.GONE);
                     tv_emptyText.setVisibility(View.VISIBLE);
@@ -112,6 +112,8 @@ public class MyApplicationFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
 
                 }
+
+
             }
 
             @Override
@@ -126,24 +128,13 @@ public class MyApplicationFragment extends Fragment {
         eventDatabase.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 if(snapshot.exists())
                 {
                         Events events = snapshot.getValue(Events.class);
                         arrEvents.add(events);
-
                 }
 
-//                if(arrEventsId.isEmpty())
-//                {
-//                    recyclerView_users.setVisibility(View.GONE);
-//                    tv_emptyText.setVisibility(View.VISIBLE);
-//                    progressBar.setVisibility(View.GONE);
-//                }else {
-//                    recyclerView_users.setVisibility(View.VISIBLE);
-//                    tv_emptyText.setVisibility(View.GONE);
-//                    progressBar.setVisibility(View.GONE);
-//
-//                }
                 progressBar.setVisibility(View.GONE);
                 adapterMyApplicationsItem.notifyDataSetChanged();
             }

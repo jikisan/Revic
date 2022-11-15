@@ -14,6 +14,7 @@ import Fragments.MostConnectedFragment;
 import Fragments.MostRatedFragment;
 import Fragments.MyApplicationFragment;
 import Fragments.NearMeFragment;
+import Fragments.PostsFragment;
 import Fragments.VideosFragment;
 
 public class fragmentAdapsterHomepage extends FragmentStateAdapter {
@@ -27,27 +28,29 @@ public class fragmentAdapsterHomepage extends FragmentStateAdapter {
 
         switch (position){
             case 1:
+                return new EventsFragment();
+            case 2:
                 return new MostConnectedFragment();
 
-            case 2:
+            case 3:
                 return new MostAppliedFragment();
 
-            case 3:
+            case 4:
                 return new MostRatedFragment();
 
-            case 4:
+            case 5:
                 return new NearMeFragment();
 
-            case 5:
+            case 6:
                 return new MyApplicationFragment();
 
         }
 
-        return new EventsFragment();
+        return new PostsFragment();
     }
 
     @Override
     public int getItemCount() {
-        return 6;
+        return 7;
     }
 }

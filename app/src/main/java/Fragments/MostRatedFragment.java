@@ -95,8 +95,10 @@ public class MostRatedFragment extends Fragment {
                         ratingsCount = events.getRatings();
                         eventsUrl = events.getImageUrl();
                         int applicants = 0;
+                        double distance = 0;
+                        String eventAddress = events.getEventAddress();
 
-                        MostRated mostRated = new MostRated(eventId, eventName, eventsUrl, ratingsCount, applicants);
+                        MostRated mostRated = new MostRated(eventId, eventName, eventsUrl, ratingsCount, applicants, distance, eventAddress);
                         arrMostRated.add(mostRated);
                     }
                 }
