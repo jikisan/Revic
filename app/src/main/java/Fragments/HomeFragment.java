@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 import Adapters.AdapterUsersItem;
 import Adapters.fragmentAdapsterHomepage;
-import Adapters.fragmentAdapter;
+import Adapters.fragmentAdapterHompage2;
 import Models.Users;
 import Objects.TextModifier;
 
@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView_searches;
     private ImageView iv_bannerPhoto;
     private fragmentAdapsterHomepage adapter;
+    private fragmentAdapterHompage2 adapter2;
 
     private TabLayout tab_layout;
     private ViewPager2 vp_viewPager2;
@@ -52,10 +53,9 @@ public class HomeFragment extends Fragment {
 
     private FirebaseUser user;
     private DatabaseReference userDatabase;
-    private String userID;
+    private String myUserId, category;
 
     private AdapterUsersItem adapterUsersItem;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,13 +63,13 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+        myUserId = user.getUid();
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
 
         setRef(view);
-        generateUserData();
-        generateTabLayout(view);
+        generateUserData(view);
+
         generateRecyclerLayout();
         clickListeners();
 
@@ -90,11 +90,11 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void generateUserData() {
+    private void generateUserData(View view) {
 
         TextModifier textModifier = new TextModifier();
 
-        userDatabase.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+        userDatabase.child(myUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -103,12 +103,22 @@ public class HomeFragment extends Fragment {
                 if(users != null){
 
                     String imageUrl = users.getImageUrl();
+                    category = users.getCategory();
 
                     Picasso.get()
                             .load(imageUrl)
                             .into(iv_bannerPhoto);
 
 
+                }
+
+                if(category.equals("Musician"))
+                {
+                    generateTabLayout(view);
+                }
+                else
+                {
+                    generateTabLayoutEvents(view);
                 }
             }
 
@@ -127,7 +137,7 @@ public class HomeFragment extends Fragment {
                     {
                         Users users = dataSnapshot.getValue(Users.class);
 
-                        if(users.getUsersId().equals(userID))
+                        if(users.getUsersId().equals(myUserId))
                         {
                             continue;
                         }
@@ -144,11 +154,14 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
+
     private void clickListeners() {
         iv_bannerPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), profile_user_page.class);
+                intent.putExtra("myPosts", "1");
                 startActivity(intent);
             }
         });
@@ -169,6 +182,42 @@ public class HomeFragment extends Fragment {
         adapter = new fragmentAdapsterHomepage(fragmentManager, getLifecycle());
         vp_viewPager2.setSaveEnabled(false);
         vp_viewPager2.setAdapter(adapter);
+
+        tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                vp_viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        vp_viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tab_layout.selectTab(tab_layout.getTabAt(position));
+            }
+        });
+    }
+
+    private void generateTabLayoutEvents(View view) {
+
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.posts));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.connected));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.rated));
+
+        FragmentManager fragmentManager = getChildFragmentManager();
+        adapter2 = new fragmentAdapterHompage2(fragmentManager, getLifecycle());
+        vp_viewPager2.setSaveEnabled(false);
+        vp_viewPager2.setAdapter(adapter2);
 
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -230,8 +279,10 @@ public class HomeFragment extends Fragment {
                 public void onItemClick(int position) {
 
                     String userID = arr.get(position).getUsersId();
+
                     Intent intent = new Intent(getContext(), profile_page.class);
                     intent.putExtra("userID", userID);
+                    intent.putExtra("myPosts", "2");
                     startActivity(intent);
 
                 }

@@ -30,7 +30,8 @@ import Adapters.AdapterMyApplicationsItem;
 import Models.Applications;
 import Models.Events;
 
-public class MyApplicationFragment extends Fragment {
+
+public class HiredFragment extends Fragment {
 
     private List<Events> arrEvents = new ArrayList<>();
     private List<String> arrEventsId = new ArrayList<>();
@@ -50,7 +51,7 @@ public class MyApplicationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_my_application, container, false);
+        View view = inflater.inflate(R.layout.fragment_hired, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
@@ -79,7 +80,7 @@ public class MyApplicationFragment extends Fragment {
 
     private void getViewHolderValues() {
 
-        Query query = applicationsDatabase.orderByChild("applicantUsersId")
+        Query query = applicationsDatabase.orderByChild("creatorUserId")
                 .equalTo(myUserId);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -95,35 +96,14 @@ public class MyApplicationFragment extends Fragment {
                         String eventId = applications.getEventId();
                         String status = applications.getStatus();
 
+                        if(status.equals("ongoing"))
+                        {
+                            arrStatus.add(status);
+                            arrEventsId.add(eventId);
+                            generateEvent(eventId);
+                        }
 
-                        generateEvent(eventId, status);
                     }
-                }
-
-
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    private void generateEvent(String eventId, String status) {
-
-        eventDatabase.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if(snapshot.exists())
-                {
-                    Events events = snapshot.getValue(Events.class);
-                    arrEvents.add(events);
-                    arrStatus.add(status);
-                    arrEventsId.add(eventId);
                 }
 
                 if(arrEventsId.isEmpty())
@@ -138,12 +118,31 @@ public class MyApplicationFragment extends Fragment {
 
                 }
 
-                progressBar.setVisibility(View.GONE);
-                adapterMyApplicationsItem.notifyDataSetChanged();
 
             }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+    }
+
+    private void generateEvent(String eventId) {
+
+        eventDatabase.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    Events events = snapshot.getValue(Events.class);
+                    arrEvents.add(events);
+                }
+
+                progressBar.setVisibility(View.GONE);
+                adapterMyApplicationsItem.notifyDataSetChanged();
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

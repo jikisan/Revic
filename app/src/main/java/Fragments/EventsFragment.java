@@ -46,7 +46,7 @@ public class EventsFragment extends Fragment {
     private FirebaseUser user;
     private DatabaseReference eventDatabase;
 
-    private String userID, eventId;
+    private String myUserId, eventId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,23 +55,13 @@ public class EventsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userID = user.getUid();
+        myUserId = user.getUid();
 
         eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
 
         setRef(view);
         generateRecyclerLayout();
 
-//        adapterEventsItem.setOnItemClickListener(new AdapterEventsItem.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//
-//                Intent intent = new Intent(getContext(), view_event_page.class);
-//                intent.putExtra("eventId", arrEventsId.get(position));
-//                getContext().startActivity(intent);
-//
-//            }
-//        });
 
         return view;
     }
@@ -99,6 +89,9 @@ public class EventsFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
+                    arrEvents.clear();
+                    arrEventsId.clear();
+
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Events events = dataSnapshot.getValue(Events.class);

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,14 +44,17 @@ public class AdapterMostConnectedItem extends RecyclerView.Adapter<AdapterMostCo
 
         String fname = users.getFname();
         String lname = users.getLname();
-        String fullName = fname + " " + lname;
 
+        String fullName = fname + " " + lname;
         String category = users.getCategory();
+        long ratingsCount = users.getRating();
         int connectionCount = users.getConnections();
         String imageUrl = users.getImageUrl();
 
         holder.tv_userName.setText(fullName);
         holder.tv_category.setText(category);
+        holder.tv_userRatingCount.setText("("+ratingsCount+")");
+        holder.rb_userRating.setRating(ratingsCount);
         holder.tv_connectionsCount.setText(connectionCount + "");
 
         Picasso.get().load(imageUrl).into(holder.iv_userPhoto);
@@ -73,7 +77,8 @@ public class AdapterMostConnectedItem extends RecyclerView.Adapter<AdapterMostCo
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         ImageView iv_userPhoto;
-        TextView tv_userName, tv_category, tv_connectionsCount;
+        TextView tv_userName, tv_category, tv_connectionsCount, tv_userRatingCount;
+        RatingBar rb_userRating;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +88,9 @@ public class AdapterMostConnectedItem extends RecyclerView.Adapter<AdapterMostCo
             tv_userName = itemView.findViewById(R.id.tv_userName);
             tv_category = itemView.findViewById(R.id.tv_category);
             tv_connectionsCount = itemView.findViewById(R.id.tv_connectionsCount);
+            tv_userRatingCount = itemView.findViewById(R.id.tv_userRatingCount);
+
+            rb_userRating = itemView.findViewById(R.id.rb_userRating);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -52,7 +52,6 @@ public class AdapterMostRatedItem extends RecyclerView.Adapter<AdapterMostRatedI
         String eventsUrl = mostRated.getEventsUrl();
         String eventsId = mostRated.getEventsId();
 
-
         holder.tv_eventName.setText(eventName);
         holder.tv_userRatingCount.setText("("+ratingsCount+")");
         holder.rb_userRating.setRating(ratingsCount);

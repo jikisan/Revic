@@ -30,6 +30,7 @@ import java.util.List;
 
 import Adapters.AdapterPhotoItem;
 import Models.Photos;
+import Models.Posts;
 
 public class PhotosFragment extends Fragment {
 
@@ -37,12 +38,12 @@ public class PhotosFragment extends Fragment {
     private AdapterPhotoItem adapterPhotoItem;
     private TextView tv_noPhotos;
 
-    private DatabaseReference userDatabase, photoDatabase;
+    private DatabaseReference userDatabase, postsDatabase;
     private FirebaseUser user;
 
     private String userID, userIdFromSearch;
 
-    private List<Photos> arrPhotos = new ArrayList<Photos>();
+    private List<Posts> arrPosts = new ArrayList<Posts>();
 
 
     @Override
@@ -51,8 +52,9 @@ public class PhotosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
 
 
-        photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
+        postsDatabase = FirebaseDatabase.getInstance().getReference("Posts");
         user = FirebaseAuth.getInstance().getCurrentUser();
+
         userIdFromSearch = getActivity().getIntent().getStringExtra("userID");
 
         if (userIdFromSearch != null) {
@@ -67,34 +69,18 @@ public class PhotosFragment extends Fragment {
 
         setRef(view);
         generateRecyclerLayout();
-        clickListeners();
 
         return view;
     }
 
-    private void clickListeners() {
 
-//        adapterPhotoItem.setOnItemClickListener(new AdapterPhotoItem.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//
-//                Toast.makeText(getActivity(), "Position: " + position, Toast.LENGTH_SHORT).show();
-//
-//                Intent intent = new Intent(getActivity(), photo_view_page.class);
-//                intent.putExtra("userID1", userIdFromSearch);
-//                intent.putExtra("current position", position);
-//                intent.putExtra("category", "add");
-//                startActivity(intent);
-//            }
-//        });
-    }
 
     private void generateRecyclerLayout() {
         rv_photos.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3, GridLayoutManager.VERTICAL, false);
         rv_photos.setLayoutManager(gridLayoutManager);
 
-        adapterPhotoItem = new AdapterPhotoItem(arrPhotos, userIdFromSearch);
+        adapterPhotoItem = new AdapterPhotoItem(arrPosts, userIdFromSearch);
         rv_photos.setAdapter(adapterPhotoItem);
 
         getViewHolderValues();
@@ -103,9 +89,9 @@ public class PhotosFragment extends Fragment {
     private void getViewHolderValues() {
 
 
-        Query query = photoDatabase
-                .orderByChild("userID")
-                .equalTo(userID);
+        Query query = postsDatabase
+                .orderByChild("fileType")
+                .equalTo("photo");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -113,11 +99,17 @@ public class PhotosFragment extends Fragment {
 
                 for(DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
-                    Photos photos = dataSnapshot.getValue(Photos.class);
-                    arrPhotos.add(photos);
+                    Posts posts = dataSnapshot.getValue(Posts.class);
+                    String postsUserId = posts.getUserId();
+
+                    if(userID.equals(postsUserId))
+                    {
+                        arrPosts.add(posts);
+                    }
+
                 }
 
-                if(arrPhotos.isEmpty())
+                if(arrPosts.isEmpty())
                 {
                     rv_photos.setVisibility(View.GONE);
                     tv_noPhotos.setVisibility(View.VISIBLE);

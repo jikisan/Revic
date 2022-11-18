@@ -109,6 +109,8 @@ public class NearMeFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
+                    arrMostRated.clear();
+
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Events events = dataSnapshot.getValue(Events.class);

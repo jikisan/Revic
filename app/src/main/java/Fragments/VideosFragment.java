@@ -30,6 +30,7 @@ import java.util.List;
 import Adapters.AdapterPhotoItem;
 import Adapters.AdapterVideoItem;
 import Models.Photos;
+import Models.Posts;
 import Models.Videos;
 
 public class VideosFragment extends Fragment {
@@ -38,12 +39,12 @@ public class VideosFragment extends Fragment {
     private AdapterVideoItem adapterVideoItem;
     private TextView tv_noVideos;
 
-    private DatabaseReference userDatabase, videoDatabase;
+    private DatabaseReference userDatabase, postsDatabase;
     private FirebaseUser user;
 
     private String userID, userIdFromSearch;
 
-    private List<Videos> arrVideos = new ArrayList<Videos>();
+    private List<Posts> arrVideos = new ArrayList<Posts>();
 
 
     @Override
@@ -51,7 +52,7 @@ public class VideosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_videos, container, false);
 
-        videoDatabase = FirebaseDatabase.getInstance().getReference("Videos");
+        postsDatabase = FirebaseDatabase.getInstance().getReference("Posts");
         user = FirebaseAuth.getInstance().getCurrentUser();
         userIdFromSearch = getActivity().getIntent().getStringExtra("userID");
 
@@ -67,8 +68,8 @@ public class VideosFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
 
-                String vidLink = arrVideos.get(position).getLink();
-                String vidName = arrVideos.get(position).getVideoName();
+                String vidLink = arrVideos.get(position).getFileUrl();
+                String vidName = arrVideos.get(position).getFileName();
 
                 Intent intent = new Intent(getActivity(), video_view_page.class);
                 intent.putExtra("userID", userID);
@@ -105,9 +106,9 @@ public class VideosFragment extends Fragment {
         }
 
 
-        Query query = videoDatabase
-                .orderByChild("userID")
-                .equalTo(userID);
+        Query query = postsDatabase
+                .orderByChild("fileType")
+                .equalTo("video");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -115,8 +116,13 @@ public class VideosFragment extends Fragment {
 
                 for(DataSnapshot dataSnapshot : snapshot.getChildren())
                 {
-                    Videos videos = dataSnapshot.getValue(Videos.class);
-                    arrVideos.add(videos);
+                    Posts posts = dataSnapshot.getValue(Posts.class);
+                    String postsUserId = posts.getUserId();
+
+                    if(userID.equals(postsUserId))
+                    {
+                        arrVideos.add(posts);
+                    }
                 }
 
                 if(arrVideos.isEmpty())

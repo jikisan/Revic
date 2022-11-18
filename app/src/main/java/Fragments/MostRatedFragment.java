@@ -35,8 +35,7 @@ import Models.Users;
 
 public class MostRatedFragment extends Fragment {
 
-    private List<Events> arrEvents = new ArrayList<>();
-    private List<MostRated> arrMostRated = new ArrayList<>();
+        private List<MostRated> arrMostRated = new ArrayList<>();
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView_users;
@@ -71,7 +70,6 @@ public class MostRatedFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView_users.setLayoutManager(linearLayoutManager);
 
-        arrEvents = new ArrayList<>();
         adapterMostRatedItem = new AdapterMostRatedItem(arrMostRated);
         recyclerView_users.setAdapter(adapterMostRatedItem);
 
@@ -86,6 +84,8 @@ public class MostRatedFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
+                    arrMostRated.clear();
+
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Events events = dataSnapshot.getValue(Events.class);

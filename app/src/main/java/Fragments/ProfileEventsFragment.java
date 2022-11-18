@@ -23,37 +23,38 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import Adapters.AdapterMostAppliedItem;
-import Adapters.AdapterMostRatedItem;
+import Adapters.AdapterEventsItem;
 import Models.Events;
-import Models.MostRated;
 
-public class MostAppliedFragment extends Fragment {
+public class ProfileEventsFragment extends Fragment {
 
-    private List<MostRated> arrMostRated = new ArrayList<>();
+    private List<Events> arrEvents = new ArrayList<>();
+    private List<String> arrEventsId = new ArrayList<>();
 
     private ProgressBar progressBar;
-    private RecyclerView recyclerView_users;
-    private AdapterMostAppliedItem adapterMostAppliedItem;
+    private RecyclerView recyclerView_events;
+    private AdapterEventsItem adapterEventsItem;
 
     private FirebaseUser user;
-    private DatabaseReference eventDatabase;
+    private DatabaseReference eventDatabase, userDatabase;
 
-    private String myUserId, userID, eventId, eventName, eventsUrl;
-    private int applicants;
+    private String myUserId, eventId, myPosts, userID;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_most_applied, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_profile_events, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
+        myPosts = getActivity().getIntent().getStringExtra("myPosts");
+        userID = getActivity().getIntent().getStringExtra("userID");
 
+        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
 
         setRef(view);
@@ -64,14 +65,17 @@ public class MostAppliedFragment extends Fragment {
 
     private void generateRecyclerLayout() {
 
-        recyclerView_users.setHasFixedSize(true);
+        recyclerView_events.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView_users.setLayoutManager(linearLayoutManager);
+        recyclerView_events.setLayoutManager(linearLayoutManager);
 
-        adapterMostAppliedItem = new AdapterMostAppliedItem(arrMostRated);
-        recyclerView_users.setAdapter(adapterMostAppliedItem);
+        arrEvents = new ArrayList<>();
+        adapterEventsItem = new AdapterEventsItem(arrEvents, arrEventsId);
+        recyclerView_events.setAdapter(adapterEventsItem);
 
         getViewHolderValues();
+
+
     }
 
     private void getViewHolderValues() {
@@ -82,38 +86,42 @@ public class MostAppliedFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
-                    arrMostRated.clear();
-
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Events events = dataSnapshot.getValue(Events.class);
-
                         eventId = dataSnapshot.getKey().toString();
-                        eventName = events.getEventName();
-                        applicants = events.getApplicants();
-                        eventsUrl = events.getImageUrl();
-                        int ratingsCount = 0;
-                        double distance = 0;
-                        String eventAddress = events.getEventAddress();
+                        String eventUsersId = events.getUserID();
 
-                        MostRated mostRated = new MostRated(eventId, eventName, eventsUrl, ratingsCount, applicants, distance, eventAddress);
-                        arrMostRated.add(mostRated);
+                        if(myPosts != null && myPosts.equals("1"))
+                        {
+                            if(myUserId.equals(eventUsersId))
+                            {
+                                arrEvents.add(events);
+                                arrEventsId.add(eventId);
+                            }
+
+                        }else if(myPosts != null && myPosts.equals("2"))
+                        {
+                            if(userID.equals(eventUsersId))
+                            {
+                                arrEvents.add(events);
+                                arrEventsId.add(eventId);
+                            }
+
+                        }else{
+                            arrEvents.add(events);
+                            arrEventsId.add(eventId);
+                        }
+
+
                     }
                 }
 
-
-                Collections.sort(arrMostRated, new Comparator<MostRated>() {
-                    @Override
-                    public int compare(MostRated t1, MostRated t2) {
-                        return Integer.compare(t1.getApplicants(), t2.getApplicants());
-                    }
-                });
-//
-                Collections.reverse(arrMostRated);
+                Collections.reverse(arrEvents);
+                Collections.reverse(arrEventsId);
 
                 progressBar.setVisibility(View.GONE);
-
-                adapterMostAppliedItem.notifyDataSetChanged();
+                adapterEventsItem.notifyDataSetChanged();
             }
 
             @Override
@@ -124,7 +132,10 @@ public class MostAppliedFragment extends Fragment {
     }
 
     private void setRef(View view) {
+
         progressBar = view.findViewById(R.id.progressBar);
-        recyclerView_users = view.findViewById(R.id.recyclerView_users);
+
+        recyclerView_events = view.findViewById(R.id.recyclerView_events);
+
     }
 }

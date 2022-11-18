@@ -9,13 +9,17 @@ public class Applications {
     private String dateCreated;
     private long dateTimeInMillis;
     private String status;
+    private String eventImageUrl;
+    private String eventName;
+    private String applicantName;
 
     public Applications() {
     }
 
     public Applications(String creatorUserId, String applicantUsersId, String eventId,
                         String timeCreated, String dateCreated, long dateTimeInMillis,
-                        String status) {
+                        String status, String eventImageUrl, String eventName,
+                        String applicantName) {
         this.creatorUserId = creatorUserId;
         this.applicantUsersId = applicantUsersId;
         this.eventId = eventId;
@@ -23,6 +27,9 @@ public class Applications {
         this.dateCreated = dateCreated;
         this.dateTimeInMillis = dateTimeInMillis;
         this.status = status;
+        this.eventImageUrl = eventImageUrl;
+        this.eventName = eventName;
+        this.applicantName = applicantName;
     }
 
     public String getCreatorUserId() {
@@ -79,5 +86,29 @@ public class Applications {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getEventImageUrl() {
+        return eventImageUrl;
+    }
+
+    public void setEventImageUrl(String eventImageUrl) {
+        this.eventImageUrl = eventImageUrl;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
     }
 }

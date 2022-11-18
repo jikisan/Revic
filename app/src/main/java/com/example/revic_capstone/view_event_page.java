@@ -39,6 +39,7 @@ import java.util.List;
 import Models.Applications;
 import Models.Events;
 import Models.Users;
+import Objects.TextModifier;
 
 public class view_event_page extends AppCompatActivity {
 
@@ -55,7 +56,7 @@ public class view_event_page extends AppCompatActivity {
     private FirebaseUser user;
     private DatabaseReference eventDatabase, userDatabase, applicationDatabase;
 
-    private String myUserID, eventId, creatorUserId, timeCreated, dateCreated;
+    private String myUserID, eventId, creatorUserId, timeCreated, dateCreated, eventImageUrl, eventName, applicantName;
     private int applicantsCount;
     private long dateTimeInMillis;
 
@@ -66,6 +67,7 @@ public class view_event_page extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserID = user.getUid();
+
         eventId = getIntent().getStringExtra("eventId");
 
         eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
@@ -74,6 +76,7 @@ public class view_event_page extends AppCompatActivity {
 
         setRef();
         generateEventsData();
+        generateApplicantsName();
         clickListeners();
     }
 
@@ -92,6 +95,13 @@ public class view_event_page extends AppCompatActivity {
                 addDataToApplicationDB();
             }
         });
+
+        btn_applied.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private void addDataToApplicationDB() {
@@ -100,7 +110,7 @@ public class view_event_page extends AppCompatActivity {
         String status = "pending";
 
         Applications applications = new Applications(creatorUserId, myUserID, eventId, timeCreated, dateCreated,
-                dateTimeInMillis, status);
+                dateTimeInMillis, status, eventImageUrl, eventName, applicantName);
 
         applicationDatabase.push().setValue(applications).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -140,8 +150,8 @@ public class view_event_page extends AppCompatActivity {
 
                 if(events != null)
                 {
-                    String eventPhotoUrl =  events.getImageUrl();
-                    String eventName = events.getEventName();
+                    eventImageUrl =  events.getImageUrl();
+                    eventName = events.getEventName();
                     long ratingsCount = events.getRatings();
                     int applicants = events.getApplicants();
                     String dateSched = events.getEventDateSched();
@@ -153,7 +163,7 @@ public class view_event_page extends AppCompatActivity {
 
 
                     Picasso.get()
-                            .load(eventPhotoUrl)
+                            .load(eventImageUrl)
                             .fit()
                             .centerCrop()
                             .into(iv_eventBannerPhoto);
@@ -165,6 +175,12 @@ public class view_event_page extends AppCompatActivity {
                     tv_dateSched.setText(dateSched);
                     tv_timeAvailable.setText(startTime + " - " + endTime);
                     tv_eventDescription.setText(eventDescription);
+
+                    if(myUserID.equals(creatorUserId))
+                    {
+                        btn_apply.setVisibility(View.GONE);
+                        btn_applied.setVisibility(View.GONE);
+                    }
 
                     generateUserData(creatorUserId);
                 }
@@ -202,7 +218,6 @@ public class view_event_page extends AppCompatActivity {
                         checkApplicationStatus();
 
 
-
                     }
                 }
 
@@ -211,6 +226,8 @@ public class view_event_page extends AppCompatActivity {
 
                 }
             });
+
+
     }
 
     private void checkApplicationStatus() {
@@ -238,11 +255,17 @@ public class view_event_page extends AppCompatActivity {
                             btn_applied.setVisibility(View.VISIBLE);
                             btn_apply.setVisibility(View.GONE);
                         }
+
+
                     }
+
+
                 }
 
                 progressBar.setVisibility(View.GONE);
             }
+
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -251,6 +274,35 @@ public class view_event_page extends AppCompatActivity {
         });
 
 
+    }
+
+    private void generateApplicantsName() {
+
+        userDatabase.child(myUserID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    Users users = snapshot.getValue(Users.class);
+
+                    TextModifier textModifier = new TextModifier();
+
+                    textModifier.setSentenceCase(users.getFname());
+                    String fName = textModifier.getSentenceCase();
+
+                    textModifier.setSentenceCase(users.getLname());
+                    String lName = textModifier.getSentenceCase();
+
+                    applicantName = fName + " " + lName;
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void setUpDate() {

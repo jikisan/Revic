@@ -266,58 +266,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
-        app:tabIndicatorColor="@color/light_orange"
-        app:tabSelectedTextColor="@color/light_orange"
-        app:tabTextColor="@color/light_orange" />
+         />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_viewPager2"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingBottom="60dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
-
-    <LinearLayout
-        android:id="@+id/event_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Events"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_eventRv"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <TextView
-            android:id="@+id/tv_noEvents"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="No Events"/>
-
-    </LinearLayout>
 
 
 

@@ -220,9 +220,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
-        app:tabIndicatorColor="@color/light_orange"
-        app:tabSelectedTextColor="@color/light_orange"
-        app:tabTextColor="@color/light_orange" />
+         />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_viewPager2"
@@ -234,57 +232,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
 
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/btn_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/dark_orange"
-        android:text="Post"
-        app:icon="@drawable/add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_addPhotoText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Add Photo"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_addPhotos"
-        app:layout_constraintEnd_toStartOf="@+id/btn_addPhotos"
-        app:layout_constraintTop_toTopOf="@+id/btn_addPhotos" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_addPhotos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/dark_orange"
-        android:src="@drawable/add_photo"
-        app:layout_constraintBottom_toTopOf="@+id/btn_post"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_addVidText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="Add Videos"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_addVideos"
-        app:layout_constraintEnd_toStartOf="@+id/btn_addVideos"
-        app:layout_constraintTop_toTopOf="@+id/btn_addVideos" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_addVideos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/dark_orange"
-        android:src="@drawable/add_video"
-        app:layout_constraintBottom_toTopOf="@+id/btn_addPhotos"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

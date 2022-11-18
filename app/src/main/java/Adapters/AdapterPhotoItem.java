@@ -19,10 +19,11 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import Models.Photos;
+import Models.Posts;
 
 public class AdapterPhotoItem extends RecyclerView.Adapter<AdapterPhotoItem.ItemViewHolder> {
 
-    private List<Photos> arr;
+    private List<Posts> arr;
     private OnItemClickListener onItemClickListener;
     private FirebaseUser user;
     private String userIdFromSearch, userID;
@@ -31,7 +32,7 @@ public class AdapterPhotoItem extends RecyclerView.Adapter<AdapterPhotoItem.Item
     public AdapterPhotoItem() {
     }
 
-    public AdapterPhotoItem(List<Photos> arr, String userIdFromSearch) {
+    public AdapterPhotoItem(List<Posts> arr, String userIdFromSearch) {
         this.arr = arr;
         this.userIdFromSearch = userIdFromSearch;
     }
@@ -57,9 +58,11 @@ public class AdapterPhotoItem extends RecyclerView.Adapter<AdapterPhotoItem.Item
             userID = user.getUid();
         }
 
-        Photos photos = arr.get(position);
+        Posts posts = arr.get(position);
 
-        String imageUrl = photos.getLink();
+        String imageUrl = posts.getFileUrl();
+        String postUserId = posts.getUserId();
+        String fileType = posts.getFileType();
 
         Picasso.get()
                 .load(imageUrl)
@@ -71,9 +74,9 @@ public class AdapterPhotoItem extends RecyclerView.Adapter<AdapterPhotoItem.Item
             public void onClick(View view) {
 
                 Intent intent = new Intent(view.getContext(), photo_view_page.class);
-                intent.putExtra("userID", userID);
+                intent.putExtra("postUserId", postUserId);
                 intent.putExtra("current position", position);
-                intent.putExtra("category", "add");
+                intent.putExtra("fileType", fileType);
                 view.getContext().startActivity(intent);
             }
         });

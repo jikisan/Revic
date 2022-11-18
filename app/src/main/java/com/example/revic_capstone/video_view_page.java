@@ -90,22 +90,22 @@ public class video_view_page extends AppCompatActivity {
 
     private void deleteVideoInDb() {
 
-        DatabaseReference videoDB = FirebaseDatabase.getInstance().getReference("Videos");
-        StorageReference vidStorage = FirebaseStorage.getInstance().getReference("Videos");
+        DatabaseReference postsDatabase = FirebaseDatabase.getInstance().getReference("Posts");
+        StorageReference postStorage = FirebaseStorage.getInstance().getReference("Posts");
 
         progressDialog = new ProgressDialog(video_view_page.this);
         progressDialog.setTitle("Deleting video: " + vidName );
         progressDialog.show();
 
-        Query query = videoDB
-                .orderByChild("videoName")
+        Query query = postsDatabase
+                .orderByChild("fileName")
                 .equalTo(vidName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                StorageReference imageRef = vidStorage.child(userID).child(vidName);
+                StorageReference imageRef = postStorage.child(userID).child(vidName);
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 

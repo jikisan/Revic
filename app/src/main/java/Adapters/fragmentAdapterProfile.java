@@ -6,14 +6,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import Fragments.EventsFragment;
-import Fragments.MostConnectedFragment;
+import Fragments.ApplicantsFragment;
+import Fragments.HiredFragment;
 import Fragments.PhotosFragment;
 import Fragments.PostsFragment;
+import Fragments.ProfileEventsFragment;
 import Fragments.VideosFragment;
 
-public class fragmentAdapter extends FragmentStateAdapter {
-    public fragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+public class fragmentAdapterProfile extends FragmentStateAdapter {
+    public fragmentAdapterProfile(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
 
@@ -23,12 +24,12 @@ public class fragmentAdapter extends FragmentStateAdapter {
 
         switch (position) {
             case 1:
-                return new PhotosFragment();
+                return new ApplicantsFragment();
             case 2:
-                return new VideosFragment();
+                return new HiredFragment();
         }
 
-        return new PostsFragment();
+        return new ProfileEventsFragment();
     }
 
     @Override

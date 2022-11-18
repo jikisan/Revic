@@ -15,19 +15,20 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import Models.Posts;
 import Models.Videos;
 
 public class AdapterVideoItem extends RecyclerView.Adapter<AdapterVideoItem.ItemViewHolder> {
 
-    private List<Videos> arrVid;
+    private List<Posts> arr;
     private Context context;
     private OnItemClickListener onItemClickListener;
 
     public AdapterVideoItem() {
     }
 
-    public AdapterVideoItem(List<Videos> arrVid, Context context) {
-        this.arrVid = arrVid;
+    public AdapterVideoItem(List<Posts> arr, Context context) {
+        this.arr = arr;
         this.context = context;
     }
 
@@ -41,9 +42,9 @@ public class AdapterVideoItem extends RecyclerView.Adapter<AdapterVideoItem.Item
     @Override
     public void onBindViewHolder(@NonNull AdapterVideoItem.ItemViewHolder holder, int position) {
 
-        Videos videos = arrVid.get(position);
+        Posts posts = arr.get(position);
 
-        String imageUrl = videos.getLink();
+        String imageUrl = posts.getFileUrl();
 
         Glide.with(context)
                 .load(imageUrl)
@@ -53,7 +54,7 @@ public class AdapterVideoItem extends RecyclerView.Adapter<AdapterVideoItem.Item
 
     @Override
     public int getItemCount() {
-        return arrVid.size();
+        return arr.size();
     }
 
     public interface  OnItemClickListener{

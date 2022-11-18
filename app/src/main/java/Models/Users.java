@@ -2,18 +2,19 @@ package Models;
 
 public class Users {
 
-    String UsersId, Email, Password, ImageUrl, ImageName, Fname, Lname, ContactNum,
+    private String UsersId, Email, Password, ImageUrl, ImageName, Fname, Lname, ContactNum,
             DOB, Gender, ValidIdUrl, ValidIdName, Company, Category;
-
-    int Connections;
+    private int Connections;
+    private long rating;
 
     public Users() {
     }
 
-    public Users(String usersId, String email, String password, String imageUrl,
-                 String imageName, String fname, String lname, String contactNum,
-                 String DOB, String gender, String validIdUrl, String validIdName,
-                 String company, String category, int connections) {
+    public Users(String usersId, String email, String password, String imageUrl, String imageName,
+                 String fname, String lname, String contactNum, String DOB, String gender,
+                 String validIdUrl, String validIdName, String company, String category,
+                 int connections, long rating) {
+
         UsersId = usersId;
         Email = email;
         Password = password;
@@ -29,6 +30,7 @@ public class Users {
         Company = company;
         Category = category;
         Connections = connections;
+        this.rating = rating;
     }
 
     public String getUsersId() {
@@ -149,5 +151,13 @@ public class Users {
 
     public void setConnections(int connections) {
         Connections = connections;
+    }
+
+    public long getRating() {
+        return rating;
+    }
+
+    public void setRating(long rating) {
+        this.rating = rating;
     }
 }

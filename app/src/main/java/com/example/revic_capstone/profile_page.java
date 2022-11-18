@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Adapters.fragmentAdapter;
+import Adapters.fragmentAdapterProfile;
 import Models.Chat;
 import Models.Connections;
 import Models.Users;
@@ -45,17 +46,18 @@ import Objects.TextModifier;
 public class profile_page extends AppCompatActivity {
 
     private LinearLayout backBtn, event_layout;
-    private fragmentAdapter adapter;
     private TextView tv_userName, tv_messageBtn, tv_connectBtn, tv_disconnectBtn, tv_category, tv_noEvents, tv_connectionsCount;
     private ImageView iv_userPhoto;
     private RecyclerView rv_eventRv;
 
     private TabLayout tab_layout;
     private ViewPager2 vp_viewPager2;
+    private fragmentAdapter adapter;
+    private fragmentAdapterProfile fragmentAdapterProfile;
 
     private StorageReference userStorage, photoStorage, videoStorage;
     private FirebaseUser user;
-    private DatabaseReference userDatabase, photoDatabase, videoDatabase, chatDatabase, connectionsDatabase;
+    private DatabaseReference userDatabase, chatDatabase, connectionsDatabase;
 
     private String userID, userIdFromSearch, chatUid, category;
     private int connections = 0, connectionsCount = 0, myConnections = 0;
@@ -76,8 +78,6 @@ public class profile_page extends AppCompatActivity {
         userIdFromSearch = getIntent().getStringExtra("userID");
 
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
-        photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
-        videoDatabase = FirebaseDatabase.getInstance().getReference("Videos");
         chatDatabase = FirebaseDatabase.getInstance().getReference("Chats");
         connectionsDatabase = FirebaseDatabase.getInstance().getReference("Connections");
 
@@ -123,18 +123,17 @@ public class profile_page extends AppCompatActivity {
 
                 }
 
+                category = users.getCategory();
+
                 if(category.equals("Musician"))
                 {
-                    tab_layout.setVisibility(View.VISIBLE);
-                    vp_viewPager2.setVisibility(View.VISIBLE);
-                    event_layout.setVisibility(View.GONE);
+
                     generateTabLayout();
                 }
                 else
                 {
-                    tab_layout.setVisibility(View.GONE);
-                    vp_viewPager2.setVisibility(View.GONE);
-                    event_layout.setVisibility(View.VISIBLE);
+
+                    generateTabLayoutEvents();
                 }
 
                 generateConnections();
@@ -210,8 +209,10 @@ public class profile_page extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(profile_page.this, homepage.class);
-                startActivity(intent);
+//                Intent intent = new Intent(profile_page.this, homepage.class);
+//                startActivity(intent);
+
+                onBackPressed();
             }
         });
 
@@ -387,14 +388,12 @@ public class profile_page extends AppCompatActivity {
 
     private void generateTabLayout() {
 
-        tab_layout.addTab(tab_layout.newTab().setText("Photos"));
-        tab_layout.addTab(tab_layout.newTab().setText("Videos"));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.posts));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.photos));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.videos));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         adapter = new fragmentAdapter(fragmentManager, getLifecycle());
-
-
-
         vp_viewPager2.setAdapter(adapter);
 
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -422,20 +421,53 @@ public class profile_page extends AppCompatActivity {
         });
     }
 
+    private void generateTabLayoutEvents() {
+
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.events));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.my_application));
+        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.ongoing));
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentAdapterProfile = new fragmentAdapterProfile(fragmentManager, getLifecycle());
+        vp_viewPager2.setAdapter(fragmentAdapterProfile);
+
+        tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                vp_viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        vp_viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tab_layout.selectTab(tab_layout.getTabAt(position));
+            }
+        });
+
+    }
+
     private void setRef() {
 
         backBtn = findViewById(R.id.backBtn);
-        event_layout = findViewById(R.id.event_layout);
 
         tv_userName = findViewById(R.id.tv_userName);
         tv_messageBtn = findViewById(R.id.tv_messageBtn);
         tv_connectBtn = findViewById(R.id.tv_connectBtn);
         tv_disconnectBtn = findViewById(R.id.tv_disconnectBtn);
         tv_category = findViewById(R.id.tv_category);
-        tv_noEvents = findViewById(R.id.tv_noEvents);
         tv_connectionsCount = findViewById(R.id.tv_connectionsCount);
 
-        rv_eventRv = findViewById(R.id.rv_eventRv);
 
         iv_userPhoto = findViewById(R.id.iv_userPhoto);
 

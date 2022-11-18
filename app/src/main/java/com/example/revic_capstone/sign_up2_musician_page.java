@@ -404,7 +404,11 @@ public class sign_up2_musician_page extends AppCompatActivity {
                                   String contactNum, String dob, String company, String
                                           userPicName, String validIdName, String userPicUrl, String validIdUrl) {
 
-        Users users = new Users(userID, username, password, userPicUrl, userPicName, firstName, lastName, contactNum, dob, gender, validIdUrl, validIdName, company, category, connections);
+        long ratings = 0;
+
+        Users users = new Users(userID, username, password, userPicUrl, userPicName,
+                firstName, lastName, contactNum, dob, gender, validIdUrl, validIdName,
+                company, category, connections, ratings);
 
         userDatabase.child(userID).setValue(users).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

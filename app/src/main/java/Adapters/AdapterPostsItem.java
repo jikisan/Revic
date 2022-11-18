@@ -2,7 +2,6 @@ package Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.revic_capstone.R;
 import com.example.revic_capstone.profile_page;
-import com.example.revic_capstone.view_event_page;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
 import java.util.List;
 
 import Models.Posts;
@@ -53,19 +57,11 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
     public void onBindViewHolder(@NonNull AdapterPostsItem.ItemViewHolder holder, int position) {
 
         Posts posts = arrPosts.get(position);
-        Users users = arrUsers.get(position);
+//        Users users = arrUsers.get(position);
 
-        String userPhotoUrl = users.getImageUrl();
 
-        TextModifier textModifier = new TextModifier();
 
-        textModifier.setSentenceCase(users.getFname());
-        String fname = textModifier.getSentenceCase();
-
-        textModifier.setSentenceCase(users.getLname());
-        String lname = textModifier.getSentenceCase();
-
-        String fullName = fname + " " + lname;
+//        String fullName = fname + " " + lname;
 
         String dateCreated = posts.getDateCreated();
         String timeCreated = posts.getTimeCreated();
@@ -74,10 +70,12 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
         String fileType = posts.getFileType();
         String postUserId = posts.getUserId();
 
-        Picasso.get().load(userPhotoUrl).into(holder.iv_userPhoto);
-        holder.tv_userFullName.setText(fullName);
+//        Picasso.get().load(userPhotoUrl).into(holder.iv_userPhoto);
+//        holder.tv_userFullName.setText(fullName);
         holder.tv_postDate.setText(dateCreated + " " + timeCreated);
         holder.tv_postMessage.setText(postMessage);
+
+        generateUsersData(postUserId, holder);
 
         if(fileType.equals("photo"))
         {
@@ -92,11 +90,9 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
             Uri uri = Uri.parse(fileUrl);
             holder.video_postVideo.setVideoURI(uri);
             MediaController mediaController = new MediaController(context);
-//            mediaController.setAnchorView(holder.video_postVideo);
+            mediaController.setAnchorView(holder.video_postVideo);
             mediaController.setMediaPlayer(holder.video_postVideo);
             holder.video_postVideo.setMediaController(mediaController);
-
-
 
         }
 
@@ -106,7 +102,49 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
 
                 Intent intent = new Intent(view.getContext(), profile_page.class);
                 intent.putExtra("userID", postUserId);
+                intent.putExtra("myPosts", "2");
                 view.getContext().startActivity(intent);
+
+            }
+        });
+    }
+
+    private void generateUsersData(String postUserId, ItemViewHolder holder) {
+
+        DatabaseReference userDatabase = userDatabase = FirebaseDatabase.getInstance().getReference("Users");
+
+        userDatabase.child(postUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    Users users = snapshot.getValue(Users.class);
+                    String userPhotoUrl = users.getImageUrl();
+
+
+                    TextModifier textModifier = new TextModifier();
+
+                    textModifier.setSentenceCase(users.getFname());
+                    String fname = textModifier.getSentenceCase();
+
+                    textModifier.setSentenceCase(users.getLname());
+                    String lname = textModifier.getSentenceCase();
+                    String fullName = fname + " " + lname;
+
+
+                    Picasso.get().load(userPhotoUrl).into(holder.iv_userPhoto);
+                    holder.tv_userFullName.setText(fullName);
+                }
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

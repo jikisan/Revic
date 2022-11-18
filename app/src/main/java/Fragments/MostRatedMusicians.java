@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -29,12 +28,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import Adapters.AdapterEventsItem;
 import Adapters.AdapterMostConnectedItem;
-import Models.Events;
 import Models.Users;
 
-public class MostConnectedFragment extends Fragment {
+
+public class MostRatedMusicians extends Fragment {
 
     private List<Users> arrUsers = new ArrayList<>();
 
@@ -51,7 +49,7 @@ public class MostConnectedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_most_connected, container, false);
+        View view = inflater.inflate(R.layout.fragment_most_rated_musicians, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
@@ -118,7 +116,6 @@ public class MostConnectedFragment extends Fragment {
                             }
 
                             arrUsers.add(users);
-
                         }else if (myCategory.equals("Event Organizer") || myCategory.equals("Restaurant") )
                         {
                             if (category.equals("Event Organizer") || category.equals("Restaurant")  ||users.getUsersId().equals(myUserId)) {
@@ -136,7 +133,7 @@ public class MostConnectedFragment extends Fragment {
                 Collections.sort(arrUsers, new Comparator<Users>() {
                     @Override
                     public int compare(Users users, Users t1) {
-                        return Integer.compare(t1.getConnections(), users.getConnections());
+                        return Long.compare(t1.getRating(), users.getRating());
                     }
                 });
 

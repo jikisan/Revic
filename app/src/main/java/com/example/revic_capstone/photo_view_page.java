@@ -30,17 +30,18 @@ import java.util.TimerTask;
 
 import Adapters.AdapterPhotoView;
 import Models.Photos;
+import Models.Posts;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class photo_view_page extends AppCompatActivity {
 
     private AdapterPhotoView adapterPhotoView;
-    private List<Photos> arrUrl = new ArrayList<Photos>();
+    private List<Posts> arrPosts = new ArrayList<Posts>();
 
-    private String userID, category, imageName, userIdFromSearch;
+    private String myUserID, fileType, imageName, postUserId;
     private int currentPosition;
 
-    private DatabaseReference photoDatabase;
+    private DatabaseReference postsDatabase;
     private FirebaseUser user;
 
     private ImageView iv_deletPhoto;
@@ -54,27 +55,24 @@ public class photo_view_page extends AppCompatActivity {
         setContentView(R.layout.photo_view_page);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-
+        myUserID = user.getUid();
 
         currentPosition = getIntent().getIntExtra("current position", 0);
-        category = getIntent().getStringExtra("category");
-        userIdFromSearch = getIntent().getStringExtra("userID");
+        fileType = getIntent().getStringExtra("fileType");
+        postUserId = getIntent().getStringExtra("postUserId");
 
-        photoDatabase = FirebaseDatabase.getInstance().getReference("Photos");
+        postsDatabase = FirebaseDatabase.getInstance().getReference("Posts");
 
-        if (userIdFromSearch != null) {
-
-            userID = userIdFromSearch;
-        }
-        else
-        {
-            userID = user.getUid();
-        }
 
         setRef();
         generateImageData();
         getViewHolderValues();
         clickListeners();
+
+        if(!postUserId.equals(myUserID))
+        {
+            iv_deletPhoto.setVisibility(View.GONE);
+        }
     }
 
     private void clickListeners() {
@@ -109,22 +107,21 @@ public class photo_view_page extends AppCompatActivity {
 
     private void deletePhotoInDb() {
 
-        DatabaseReference photoDB = FirebaseDatabase.getInstance().getReference("Photos");
-        StorageReference photoStorage = FirebaseStorage.getInstance().getReference("Photos");
+        StorageReference postStorage = FirebaseStorage.getInstance().getReference("Posts");
 
         progressDialog = new ProgressDialog(photo_view_page.this);
         progressDialog.setTitle("Deleting photo: " + imageName );
         progressDialog.show();
 
-        Query query = photoDB
-                .orderByChild("photoName")
+        Query query = postsDatabase
+                .orderByChild("fileName")
                 .equalTo(imageName);
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                StorageReference imageRef = photoStorage.child(userID).child(imageName);
+                StorageReference imageRef = postStorage.child(postUserId).child(imageName);
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
@@ -161,7 +158,7 @@ public class photo_view_page extends AppCompatActivity {
     private void generateImageData() {
 
         // Initializing the ViewPagerAdapter
-        adapterPhotoView = new AdapterPhotoView(photo_view_page.this, arrUrl, currentPosition, category);
+        adapterPhotoView = new AdapterPhotoView(photo_view_page.this, arrPosts);
 
         // Adding the Adapter to the ViewPager
         vp_photoFullscreen.setAdapter(adapterPhotoView);
@@ -181,20 +178,31 @@ public class photo_view_page extends AppCompatActivity {
 
     private void getViewHolderValues() {
 
-        Query query = photoDatabase
-                .orderByChild("userID")
-                .equalTo(userID);
+        Query query = postsDatabase
+                .orderByChild("fileType")
+                .equalTo("photo");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                if(snapshot.exists())
                 {
-                    Photos photos = dataSnapshot.getValue(Photos.class);
-                    imageName = photos.getPhotoName().toString();
-                    arrUrl.add(photos);
+                    arrPosts.clear();
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Posts posts = dataSnapshot.getValue(Posts.class);
+                        String userId = posts.getUserId();
+
+                        if(userId.equals(postUserId))
+                        {
+                            imageName = posts.getFileName();
+                            arrPosts.add(posts);
+                        }
+
+                    }
                 }
+
 
                 adapterPhotoView.notifyDataSetChanged();
 

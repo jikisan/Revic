@@ -19,29 +19,24 @@ import java.util.List;
 import java.util.Objects;
 
 import Models.Photos;
+import Models.Posts;
 
 public class AdapterPhotoView extends PagerAdapter {
 
     private Context context;
-    private List<Photos> arrUrl = new ArrayList<Photos>();
-    private ProgressDialog progressDialog;
-    private int currentPosition;
-    private String category;
+    private List<Posts> arrUrl = new ArrayList<Posts>();
 
     private LayoutInflater mLayoutInflater;
 
     public AdapterPhotoView() {
     }
 
-    public AdapterPhotoView(Context context, List<Photos> arrUrl, int currentPosition, String category) {
+    public AdapterPhotoView(Context context, List<Posts> arrUrl) {
         this.context = context;
         this.arrUrl = arrUrl;
-        this.currentPosition = currentPosition;
-        this.category = category;
 
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
-
 
     @Override
     public int getCount() {
@@ -63,9 +58,9 @@ public class AdapterPhotoView extends PagerAdapter {
 
         // setting the image in the imageView
 
-        Photos photos = arrUrl.get(position);
+        Posts posts = arrUrl.get(position);
 
-        String imageUrl = photos.getLink();
+        String imageUrl = posts.getFileUrl();
 
         Picasso.get()
                 .load(imageUrl)
