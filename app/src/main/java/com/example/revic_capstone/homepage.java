@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -32,7 +33,7 @@ public class homepage extends AppCompatActivity {
 
     private FirebaseUser user;
     private DatabaseReference userDatabase;
-    private String userID, category;
+    private String userID, category, pageNumber, myCategory;
 
     HomeFragment homeFragment = new HomeFragment();
     HomeFragmentForRestAndEO homeFragmentForRestAndEO = new HomeFragmentForRestAndEO();
@@ -50,13 +51,55 @@ public class homepage extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userID = user.getUid();
 
+        myCategory = getIntent().getStringExtra("myCategory");
+        pageNumber = getIntent().getStringExtra("pageNumber");
+
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
 
         generateCategory();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
+
+
+        if(pageNumber != null) {
+
+            if(pageNumber.equals("3"))
+            {
+
+                if( myCategory.equals("Musician"))
+                {
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, postPhotosAndVidFragment);
+                    fragmentTransaction.commitNow();
+
+                    bottomNavigationView.setSelectedItemId(R.id.event);
+
+                }
+                else{
+
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.container, postEventsFragment);
+                    fragmentTransaction.commitNow();
+
+                    bottomNavigationView.setSelectedItemId(R.id.event);
+                }
+            } else if(pageNumber.equals("5"))
+            {
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.container, profileFragment);
+                fragmentTransaction.commitNow();
+
+                bottomNavigationView.setSelectedItemId(R.id.profile);
+            }
+
+        }
+        else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
+        }
+
+
+
 
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

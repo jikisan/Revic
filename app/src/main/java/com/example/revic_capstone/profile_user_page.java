@@ -14,6 +14,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,6 +49,7 @@ import Models.Photos;
 import Models.Users;
 import Models.Videos;
 import Objects.TextModifier;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class profile_user_page extends AppCompatActivity {
 
@@ -53,6 +57,7 @@ public class profile_user_page extends AppCompatActivity {
     private static final int PICK_VID = 2;
 
     private TextView tv_userName, tv_category, tv_connectionsCount;
+    private TextView  tv_editProfile, tv_changePassword, tv_privacyPolicy, tv_aboutUs, tv_logout;
     private LinearLayout backBtn, event_layout;
     private ImageView iv_userPhoto;
     private ProgressDialog progressDialog;
@@ -61,6 +66,7 @@ public class profile_user_page extends AppCompatActivity {
     private ViewPager2 vp_viewPager2;
     private fragmentAdapter adapter;
     private fragmentAdapterProfile fragmentAdapterProfile;
+    private ArrayAdapter<CharSequence> adapterSettings;
 
     private StorageReference photoStorage, videoStorage;
     private FirebaseUser user;
@@ -71,7 +77,6 @@ public class profile_user_page extends AppCompatActivity {
 
     private ArrayList<Uri> arrImageList = new ArrayList<Uri>();
     private ArrayList<Uri> arrVideoList = new ArrayList<Uri>();
-
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +95,69 @@ public class profile_user_page extends AppCompatActivity {
         setRef();
         generateUserData();
         clickListeners();
+    }
+
+    private void clickListeners() {
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(profile_user_page.this, homepage.class);
+                startActivity(intent);
+            }
+        });
+
+        tv_editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(profile_user_page.this, "Edit Profile coming soon", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        tv_changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(profile_user_page.this, change_password_page.class);
+                intent.putExtra("User Email", user.getEmail());
+                startActivity(intent);
+            }
+        });
+
+        tv_aboutUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(profile_user_page.this, "About us coming soon.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        tv_privacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(profile_user_page.this, "Privacy policy coming soon", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        tv_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new SweetAlertDialog(profile_user_page.this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Warning!")
+                        .setCancelText("Cancel")
+                        .setConfirmButton("Log Out", new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                FirebaseAuth.getInstance().signOut();
+                                startActivity(new Intent(profile_user_page.this, intro_logo.class));
+
+                            }
+                        })
+                        .setContentText("Are you sure \nyou want to logout?")
+                        .show();
+
+            }
+        });
+
     }
 
     private void generateUserData() {
@@ -144,19 +212,6 @@ public class profile_user_page extends AppCompatActivity {
             }
         });
 
-
-    }
-
-
-    private void clickListeners() {
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(profile_user_page.this, homepage.class);
-                startActivity(intent);
-            }
-        });
 
     }
 
@@ -236,6 +291,11 @@ public class profile_user_page extends AppCompatActivity {
 
         backBtn = findViewById(R.id.backBtn);
 
+        tv_editProfile = findViewById(R.id.tv_editProfile);
+        tv_changePassword = findViewById(R.id.tv_changePassword);
+        tv_privacyPolicy = findViewById(R.id.tv_privacyPolicy);
+        tv_aboutUs = findViewById(R.id.tv_aboutUs);
+        tv_logout = findViewById(R.id.tv_logout);
         tv_userName = findViewById(R.id.tv_userName);
         tv_connectionsCount = findViewById(R.id.tv_connectionsCount);
         tv_category = findViewById(R.id.tv_category);
@@ -244,192 +304,7 @@ public class profile_user_page extends AppCompatActivity {
         vp_viewPager2 = findViewById(R.id.vp_viewPager2);
 
         iv_userPhoto = findViewById(R.id.iv_userPhoto);
+
     }
 
-//    @SuppressLint("SetTextI18n")
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == PICK_IMG) {
-//            if (resultCode == RESULT_OK) {
-//                if (data.getClipData() != null) {
-//                    int count = data.getClipData().getItemCount();
-//
-//                    int CurrentImageSelect = 0;
-//
-//                    while (CurrentImageSelect < count) {
-//                        Uri imageuri = data.getClipData().getItemAt(CurrentImageSelect).getUri();
-//                        arrImageList.add(imageuri);
-//                        CurrentImageSelect = CurrentImageSelect + 1;
-//                    }
-//
-//                    int imageCount = arrImageList.size();
-//
-//                    uploadPhotos(imageCount);
-//
-//
-//                }
-//                else
-//                {
-//                    Uri imageuri = data.getData();
-//                    if (imageuri != null)
-//                    {
-//
-//                        arrImageList.add(imageuri);
-//
-//                        int imageCount = arrImageList.size();
-//                        uploadPhotos(imageCount);
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//        else  if (requestCode == PICK_VID) {
-//            if (resultCode == RESULT_OK) {
-//                if (data.getClipData() != null) {
-//                    int count = data.getClipData().getItemCount();
-//
-//                    int CurrentVideoSelect = 0;
-//
-//                    while (CurrentVideoSelect < count) {
-//                        Uri videouri = data.getClipData().getItemAt(CurrentVideoSelect).getUri();
-//                        arrVideoList.add(videouri);
-//                        CurrentVideoSelect = CurrentVideoSelect + 1;
-//                    }
-//
-//                    int vidCount = arrVideoList.size();
-//                    uploadVideos(vidCount);
-//
-//                }
-//                else {
-//                    Uri uri = data.getData();
-//                    if (uri != null) {
-//
-//                        arrVideoList.add(uri);
-//
-//                        int vidCount = arrVideoList.size();
-//                        uploadVideos(vidCount);
-//
-//
-//                    }
-//                }
-//
-//            }
-//
-//        }
-//
-//    }
-//
-//    private void uploadVideos(int vidCount) {
-//
-//        progressDialog = new ProgressDialog(profile_user_page.this);
-//        progressDialog.setTitle("Uploading " + vidCount + " videos");
-//        progressDialog.show();
-//
-//        for (uploads=0; uploads < arrVideoList.size(); uploads++)
-//        {
-//            Uri Video  = arrVideoList.get(uploads);
-//
-//            long videoTime = System.currentTimeMillis();
-//            String fileType = getfiletype(Video);
-//            String videoName = videoTime + Video.getLastPathSegment().toString() + uploads + "." + fileType;
-//
-//            StorageReference videoRef = videoStorage.child(videoName);
-//
-//            videoRef.putFile(arrVideoList.get(uploads)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    videoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//
-//                            String url = String.valueOf(uri);
-//                            SendVidLink(url, videoName);
-//                        }
-//                    });
-//
-//                }
-//            });
-//        }
-//    }
-//
-//    private void SendVidLink(String url, String videoName) {
-//
-//        Videos videos = new Videos(userID, url, videoName);
-//
-//        videoDatabase.push().setValue(videos).addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//
-//                arrVideoList.clear();
-//                Toast.makeText(profile_user_page.this, "Upload complete", Toast.LENGTH_SHORT).show();
-//                progressDialog.dismiss();
-//                Intent intent = new Intent(profile_user_page.this, profile_user_page.class);
-//                startActivity(intent);
-//            }
-//        });
-//    }
-//
-//    @SuppressLint("SetTextI18n")
-//    private void uploadPhotos(int imageCount) {
-//
-//        progressDialog = new ProgressDialog(profile_user_page.this);
-//        progressDialog.setTitle("Uploading " + imageCount + " photos");
-//        progressDialog.show();
-//
-//
-//        for (uploads=0; uploads < arrImageList.size(); uploads++)
-//        {
-//            Uri Image  = arrImageList.get(uploads);
-//
-//            long imageTime = System.currentTimeMillis();
-//            String imageName = imageTime + Image.getLastPathSegment().toString();
-//
-//            StorageReference imagename = photoStorage.child(imageName);
-//
-//            imagename.putFile(arrImageList.get(uploads)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    imagename.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//
-//                            String url = String.valueOf(uri);
-//                            SendLink(url, imageName);
-//                        }
-//                    });
-//
-//                }
-//            });
-//
-//        }
-//
-//    }
-//
-//    private void SendLink(String url, String imageName) {
-//
-//        Photos photos = new Photos(userID, url, imageName);
-//
-//        photoDatabase.push().setValue(photos).addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//
-//                arrImageList.clear();
-//                Toast.makeText(profile_user_page.this, "Upload complete", Toast.LENGTH_SHORT);
-//                progressDialog.dismiss();
-//                Intent intent = new Intent(profile_user_page.this, profile_user_page.class);
-//                startActivity(intent);
-//
-//            }
-//        });
-//    }
-//
-//    private String getfiletype(Uri videouri) {
-//        ContentResolver r = getContentResolver();
-//        // get the file type ,in this case its mp4
-//        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-//        return mimeTypeMap.getExtensionFromMimeType(r.getType(videouri));
-//    }
 }

@@ -18,6 +18,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.revic_capstone.R;
+import com.example.revic_capstone.homepage;
 import com.example.revic_capstone.profile_page;
 import com.example.revic_capstone.profile_user_page;
 import com.google.android.material.tabs.TabLayout;
@@ -154,14 +155,13 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
-
     private void clickListeners() {
         iv_bannerPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), profile_user_page.class);
-                intent.putExtra("myPosts", "1");
+                Intent intent = new Intent(getContext(), homepage.class);
+                intent.putExtra("pageNumber", "5");
+                intent.putExtra("myCategory", category);
                 startActivity(intent);
             }
         });

@@ -26,14 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import Adapters.AdapterEventsItem;
-import Adapters.AdapterMostConnectedItem;
 import Adapters.AdapterPostsItem;
-import Models.Events;
 import Models.Posts;
 import Models.Users;
 
-public class PostsFragment extends Fragment {
+public class PostsFragmentInMyProfile extends Fragment {
 
     private List<Posts> arrPosts = new ArrayList<>();
     private List<Users> arrUsers = new ArrayList<>();
@@ -48,11 +45,12 @@ public class PostsFragment extends Fragment {
 
     private String myUserId, myPosts, userID;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_posts, container, false);
+        View view = inflater.inflate(R.layout.fragment_posts_in_my_profile, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
@@ -95,7 +93,21 @@ public class PostsFragment extends Fragment {
                         Posts posts = dataSnapshot.getValue(Posts.class);
                         String postUsersId = posts.getUserId();
 
-                        arrPosts.add(posts);
+                        if(myPosts != null && myPosts.equals("2"))
+                        {
+                            if(userID.equals(postUsersId))
+                            {
+//                                generateUsersData(postUsersId);
+                                arrPosts.add(posts);
+                            }
+
+                        }else if(myUserId.equals(postUsersId))
+
+                        {
+                            arrPosts.add(posts);
+                        }
+
+
 
                     }
 

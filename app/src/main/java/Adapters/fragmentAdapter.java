@@ -10,6 +10,7 @@ import Fragments.EventsFragment;
 import Fragments.MostConnectedFragment;
 import Fragments.PhotosFragment;
 import Fragments.PostsFragment;
+import Fragments.PostsFragmentInMyProfile;
 import Fragments.VideosFragment;
 
 public class fragmentAdapter extends FragmentStateAdapter {
@@ -28,7 +29,7 @@ public class fragmentAdapter extends FragmentStateAdapter {
                 return new VideosFragment();
         }
 
-        return new PostsFragment();
+        return new PostsFragmentInMyProfile();
     }
 
     @Override
