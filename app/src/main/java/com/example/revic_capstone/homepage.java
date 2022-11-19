@@ -86,6 +86,7 @@ public class homepage extends AppCompatActivity {
                 }
             } else if(pageNumber.equals("5"))
             {
+
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.container, profileFragment);
                 fragmentTransaction.commitNow();

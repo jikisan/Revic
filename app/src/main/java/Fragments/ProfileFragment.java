@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.revic_capstone.R;
 import com.example.revic_capstone.change_password_page;
+import com.example.revic_capstone.edit_profile_page;
 import com.example.revic_capstone.homepage;
 import com.example.revic_capstone.intro_logo;
 import com.example.revic_capstone.profile_user_page;
@@ -155,7 +156,9 @@ public class ProfileFragment extends Fragment {
         tv_editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "Edit Profile coming soon", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), edit_profile_page.class);
+                intent.putExtra("myCategory", category);
+                startActivity(intent);
             }
         });
 

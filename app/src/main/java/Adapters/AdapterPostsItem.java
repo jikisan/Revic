@@ -91,7 +91,7 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
             holder.video_postVideo.setVideoURI(uri);
             MediaController mediaController = new MediaController(context);
             mediaController.setAnchorView(holder.video_postVideo);
-            mediaController.setMediaPlayer(holder.video_postVideo);
+//            mediaController.setMediaPlayer(holder.video_postVideo);
             holder.video_postVideo.setMediaController(mediaController);
 
         }

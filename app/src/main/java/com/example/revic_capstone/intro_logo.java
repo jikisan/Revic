@@ -29,8 +29,20 @@ public class intro_logo extends AppCompatActivity {
             @Override
             public void run() {
 
-                Intent intent;
-                intent = new Intent(intro_logo.this, login_page.class);
+                if(!(user == null))
+                {
+                    Intent intent = new Intent(intro_logo.this, homepage.class);
+                    startActivity(intent);
+                    finish();
+
+                }else{
+                    Intent intent;
+                    intent = new Intent(intro_logo.this, login_page.class);
+                    startActivity(intent);
+                    finish();
+                }
+
+
 
 //                if(user == null)
 //                {
@@ -42,7 +54,7 @@ public class intro_logo extends AppCompatActivity {
 //                }
 
 
-                startActivity(intent);
+
 
 
             }

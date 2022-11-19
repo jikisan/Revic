@@ -53,7 +53,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class sign_up2_musician_page extends AppCompatActivity {
 
-    private String category, password, username, gender;
+
     private int connections = 0;
 
     private TextView textView, tv_date, tv_addValidID, tv_signIn;
@@ -74,6 +74,7 @@ public class sign_up2_musician_page extends AppCompatActivity {
     public static final int USER_PIC = 3;
     public static final int VALID_ID = 2;
 
+    private String category, password, username, gender;
     private Uri userPicUri, validIdUri;
     private ProgressDialog progressDialog;
 

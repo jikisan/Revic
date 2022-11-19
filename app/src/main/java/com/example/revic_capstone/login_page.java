@@ -56,11 +56,11 @@ public class login_page extends AppCompatActivity {
 
     private void validateUserType() {
 
-        if(!(user == null))
-        {
-            Intent intent = new Intent(login_page.this, homepage.class);
-            startActivity(intent);
-        }
+//        if(!(user == null))
+//        {
+//            Intent intent = new Intent(login_page.this, homepage.class);
+//            startActivity(intent);
+//        }
 
         if(!(userType == null))
         {
@@ -159,11 +159,13 @@ public class login_page extends AppCompatActivity {
                                     else
                                     {
                                         startActivity(new Intent(getApplicationContext(), homepage.class));
+                                        finish();
                                     }
                                 }
                                 else
                                 {
                                     startActivity(new Intent(getApplicationContext(), homepage.class));
+                                    finish();
                                 }
 
 //                                if(user.isEmailVerified())
