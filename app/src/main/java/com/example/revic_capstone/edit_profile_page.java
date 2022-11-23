@@ -256,6 +256,7 @@ public class edit_profile_page extends AppCompatActivity {
                                                     Intent intent = new Intent(edit_profile_page.this, homepage.class);
                                                     intent.putExtra("pageNumber", "5");
                                                     intent.putExtra("myCategory", category);
+                                                    intent.putExtra("myPosts", "1");
                                                     startActivity(intent);
                                                 }
                                             })
@@ -302,6 +303,7 @@ public class edit_profile_page extends AppCompatActivity {
                                     Intent intent = new Intent(edit_profile_page.this, homepage.class);
                                     intent.putExtra("pageNumber", "5");
                                     intent.putExtra("myCategory", category);
+                                    intent.putExtra("myPosts", "1");
                                     startActivity(intent);
                                 }
                             })

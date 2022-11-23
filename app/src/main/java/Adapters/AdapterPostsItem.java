@@ -2,6 +2,7 @@ package Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,12 +58,6 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
     public void onBindViewHolder(@NonNull AdapterPostsItem.ItemViewHolder holder, int position) {
 
         Posts posts = arrPosts.get(position);
-//        Users users = arrUsers.get(position);
-
-
-
-//        String fullName = fname + " " + lname;
-
         String dateCreated = posts.getDateCreated();
         String timeCreated = posts.getTimeCreated();
         String postMessage = posts.getPostMessage();
@@ -70,8 +65,6 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
         String fileType = posts.getFileType();
         String postUserId = posts.getUserId();
 
-//        Picasso.get().load(userPhotoUrl).into(holder.iv_userPhoto);
-//        holder.tv_userFullName.setText(fullName);
         holder.tv_postDate.setText(dateCreated + " " + timeCreated);
         holder.tv_postMessage.setText(postMessage);
 
@@ -80,19 +73,63 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
         if(fileType.equals("photo"))
         {
             holder.video_postVideo.setVisibility(View.INVISIBLE);
+            holder.tv_play.setVisibility(View.INVISIBLE);
+            holder.tv_pause.setVisibility(View.INVISIBLE);
+
             Picasso.get().load(fileUrl)
                     .into(holder.iv_postPhoto);
 
         }else if(fileType.equals("video"))
         {
             holder.iv_postPhoto.setVisibility(View.INVISIBLE);
+            holder.tv_pause.setVisibility(View.INVISIBLE);
+            holder.tv_play.setVisibility(View.VISIBLE);
 
             Uri uri = Uri.parse(fileUrl);
             holder.video_postVideo.setVideoURI(uri);
-            MediaController mediaController = new MediaController(context);
-            mediaController.setAnchorView(holder.video_postVideo);
+
+//            MediaController mediaController = new MediaController(context);
+//            mediaController.setAnchorView(holder.video_postVideo);
 //            mediaController.setMediaPlayer(holder.video_postVideo);
-            holder.video_postVideo.setMediaController(mediaController);
+//            holder.video_postVideo.setMediaController(mediaController);
+
+//            holder.itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    holder.video_postVideo.start();
+//                }
+//            });
+
+            holder.tv_pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    holder.video_postVideo.pause();
+
+                    holder.tv_pause.setVisibility(View.INVISIBLE);
+                    holder.tv_play.setVisibility(View.VISIBLE);
+                }
+            });
+
+            holder.tv_play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    holder.video_postVideo.start();
+
+                    holder.tv_pause.setVisibility(View.VISIBLE);
+                    holder.tv_play.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            holder.video_postVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.start();
+                    mediaPlayer.pause();
+                }
+            });
+
 
         }
 
@@ -133,12 +170,12 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
                     String fullName = fname + " " + lname;
 
 
-                    Picasso.get().load(userPhotoUrl).into(holder.iv_userPhoto);
+                    Picasso.get().load(userPhotoUrl)
+                            .resize(1920 , 1080 )
+                            .onlyScaleDown()
+                            .into(holder.iv_userPhoto);
                     holder.tv_userFullName.setText(fullName);
                 }
-
-
-
 
             }
 
@@ -165,7 +202,7 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
     public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         ImageView iv_userPhoto, iv_postPhoto;
-        TextView tv_userFullName, tv_postDate, tv_postMessage;
+        TextView tv_userFullName, tv_postDate, tv_postMessage, tv_play, tv_pause;
         VideoView video_postVideo;
 
         public ItemViewHolder(@NonNull View itemView) {
@@ -177,6 +214,8 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
             tv_userFullName = itemView.findViewById(R.id.tv_userFullName);
             tv_postDate = itemView.findViewById(R.id.tv_postDate);
             tv_postMessage = itemView.findViewById(R.id.tv_postMessage);
+            tv_play = itemView.findViewById(R.id.tv_play);
+            tv_pause = itemView.findViewById(R.id.tv_pause);
 
             video_postVideo = itemView.findViewById(R.id.video_postVideo);
 

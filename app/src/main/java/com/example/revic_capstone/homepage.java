@@ -67,7 +67,7 @@ public class homepage extends AppCompatActivity {
             if(pageNumber.equals("3"))
             {
 
-                if( myCategory.equals("Musician"))
+                if( category.equals("Musician"))
                 {
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container, postPhotosAndVidFragment);
@@ -98,10 +98,6 @@ public class homepage extends AppCompatActivity {
         else {
             getSupportFragmentManager().beginTransaction().replace(R.id.container,homeFragment).commit();
         }
-
-
-
-
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override

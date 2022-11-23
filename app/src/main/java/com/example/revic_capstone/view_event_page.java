@@ -3,6 +3,7 @@ package com.example.revic_capstone;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import Models.Applications;
 import Models.Events;
+import Models.Ratings;
 import Models.Users;
 import Objects.TextModifier;
 
@@ -45,18 +47,21 @@ public class view_event_page extends AppCompatActivity {
 
     private ImageView iv_eventBannerPhoto, iv_userPhoto;
     private TextView tv_userName, tv_eventName, tv_eventCategory, tv_timeAvailable,
-            tv_eventDescription, tv_dateSched, tv_applicantsCount, tv_userRatingCount;
+            tv_eventDescription, tv_dateSched, tv_applicantsCount, tv_userRatingCount
+            , tv_noReviews, tv_eventPrice;
     private Button btn_apply, btn_applied;
     private FloatingActionButton btn_back;
     private ProgressBar progressBar;
     private RatingBar rb_userRating;
+    private RecyclerView recyclerView_reviews;
 
     private List<Events> arrEvents = new ArrayList<>();
+    private List<Ratings> arrRatings = new ArrayList<>();
 
     private FirebaseUser user;
-    private DatabaseReference eventDatabase, userDatabase, applicationDatabase;
+    private DatabaseReference eventDatabase, userDatabase, applicationDatabase, ratingDatabase;
 
-    private String myUserID, eventId, creatorUserId, timeCreated, dateCreated, eventImageUrl, eventName, applicantName;
+    private String myUserID, eventId, creatorUserId, timeCreated, dateCreated, eventImageUrl, eventName, applicantImageUrl, applicantName;
     private int applicantsCount;
     private long dateTimeInMillis;
 
@@ -73,11 +78,61 @@ public class view_event_page extends AppCompatActivity {
         eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         applicationDatabase = FirebaseDatabase.getInstance().getReference("Applications");
+        ratingDatabase = FirebaseDatabase.getInstance().getReference("Ratings");
 
         setRef();
         generateEventsData();
+        generateRatingAverage();
         generateApplicantsName();
+        generateRecyclerLayout();
         clickListeners();
+    }
+
+    private void generateRatingAverage() {
+
+        Query query = ratingDatabase.orderByChild("ratingOfId").equalTo(eventId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                int counter = 0;
+                double totalRating = 0, tempRatingValue = 0, averageRating = 0;
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Ratings ratings = dataSnapshot.getValue(Ratings.class);
+                        tempRatingValue = ratings.getRatingValue();
+                        totalRating = totalRating + tempRatingValue;
+                        counter++;
+                    }
+
+                    averageRating = totalRating / counter;
+                    String ratingCounter = "(" + String.valueOf(averageRating) + ")";
+
+                    tv_userRatingCount.setText(ratingCounter);
+                    rb_userRating.setRating((float) averageRating);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void generateRecyclerLayout() {
+
+        if(arrRatings.isEmpty())
+        {
+            tv_noReviews.setVisibility(View.VISIBLE);
+            recyclerView_reviews.setVisibility(View.GONE);
+        }
     }
 
     private void clickListeners() {
@@ -110,7 +165,7 @@ public class view_event_page extends AppCompatActivity {
         String status = "pending";
 
         Applications applications = new Applications(creatorUserId, myUserID, eventId, timeCreated, dateCreated,
-                dateTimeInMillis, status, eventImageUrl, eventName, applicantName);
+                dateTimeInMillis, status, eventImageUrl, eventName, applicantImageUrl, applicantName);
 
         applicationDatabase.push().setValue(applications).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -152,7 +207,7 @@ public class view_event_page extends AppCompatActivity {
                 {
                     eventImageUrl =  events.getImageUrl();
                     eventName = events.getEventName();
-                    long ratingsCount = events.getRatings();
+                    double eventPrice = events.getEventPrice();
                     int applicants = events.getApplicants();
                     String dateSched = events.getEventDateSched();
                     String startTime = events.getTimeStart();
@@ -169,8 +224,7 @@ public class view_event_page extends AppCompatActivity {
                             .into(iv_eventBannerPhoto);
 
                     tv_eventName.setText(eventName);
-                    rb_userRating.setRating(ratingsCount);
-                    tv_userRatingCount.setText("("+ratingsCount+")");
+                    tv_eventPrice.setText("₱ "+eventPrice+" / Event");
                     tv_applicantsCount.setText(applicants + "");
                     tv_dateSched.setText(dateSched);
                     tv_timeAvailable.setText(startTime + " - " + endTime);
@@ -285,6 +339,8 @@ public class view_event_page extends AppCompatActivity {
                 {
                     Users users = snapshot.getValue(Users.class);
 
+                    applicantImageUrl= users.getImageUrl();
+
                     TextModifier textModifier = new TextModifier();
 
                     textModifier.setSentenceCase(users.getFname());
@@ -293,6 +349,7 @@ public class view_event_page extends AppCompatActivity {
                     textModifier.setSentenceCase(users.getLname());
                     String lName = textModifier.getSentenceCase();
 
+                    applicantImageUrl = users.getImageUrl();
                     applicantName = fName + " " + lName;
 
                 }
@@ -334,6 +391,10 @@ public class view_event_page extends AppCompatActivity {
         tv_eventDescription = findViewById(R.id.tv_eventDescription);
         tv_applicantsCount = findViewById(R.id.tv_applicantsCount);
         tv_userRatingCount = findViewById(R.id.tv_userRatingCount);
+        tv_noReviews = findViewById(R.id.tv_noReviews);
+        tv_eventPrice = findViewById(R.id.tv_eventPrice);
+
+        recyclerView_reviews = findViewById(R.id.recyclerView_reviews);
 
         btn_apply = findViewById(R.id.btn_apply);
         btn_applied = findViewById(R.id.btn_applied);

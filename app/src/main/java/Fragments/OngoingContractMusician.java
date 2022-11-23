@@ -27,13 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Adapters.AdapterHiredItem;
-import Adapters.AdapterMyApplicationsItem;
-import Models.Applications;
+import Adapters.AdapterMusicianContractItem;
 import Models.Contracts;
-import Models.Events;
 
-
-public class HiredFragment extends Fragment {
+public class OngoingContractMusician extends Fragment {
 
     private List<Contracts> arrContracts = new ArrayList<>();
     private List<String> arrContractId = new ArrayList<>();
@@ -41,18 +38,19 @@ public class HiredFragment extends Fragment {
     private ProgressBar progressBar;
     private TextView tv_emptyText;
     private RecyclerView recyclerView_users;
-    private AdapterHiredItem adapterHiredItem;
+    private AdapterMusicianContractItem adapterMusicianContract;
 
     private FirebaseUser user;
     private DatabaseReference eventDatabase, contractDatabase;
 
     private String myUserId ;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_hired, container, false);
+       View view =  inflater.inflate(R.layout.fragment_ongoing_contract_musician, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
@@ -63,18 +61,17 @@ public class HiredFragment extends Fragment {
         setRef(view);
         generateRecyclerLayout();
 
-        return view;
+       return view;
     }
 
     private void generateRecyclerLayout() {
-
 
         recyclerView_users.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView_users.setLayoutManager(linearLayoutManager);
 
-        adapterHiredItem = new AdapterHiredItem(arrContracts, arrContractId);
-        recyclerView_users.setAdapter(adapterHiredItem);
+        adapterMusicianContract = new AdapterMusicianContractItem(arrContracts, arrContractId);
+        recyclerView_users.setAdapter(adapterMusicianContract);
 
         getViewHolderValues();
     }
@@ -94,10 +91,10 @@ public class HiredFragment extends Fragment {
                     {
                         Contracts contracts = dataSnapshot.getValue(Contracts.class);
 
-                        String creatorUserId = contracts.getCreatorUserId();
+                        String employeeIdId = contracts.getEmployeeId();
                         String contractId = dataSnapshot.getKey().toString();
 
-                        if(creatorUserId.equals(myUserId))
+                        if(employeeIdId.equals(myUserId))
                         {
                             arrContracts.add(contracts);
                             arrContractId.add(contractId);
@@ -111,12 +108,12 @@ public class HiredFragment extends Fragment {
                     recyclerView_users.setVisibility(View.GONE);
                     tv_emptyText.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
-                    adapterHiredItem.notifyDataSetChanged();
+                    adapterMusicianContract.notifyDataSetChanged();
                 }else {
                     recyclerView_users.setVisibility(View.VISIBLE);
                     tv_emptyText.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
-                    adapterHiredItem.notifyDataSetChanged();
+                    adapterMusicianContract.notifyDataSetChanged();
 
                 }
 

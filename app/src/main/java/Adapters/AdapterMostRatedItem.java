@@ -15,12 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.revic_capstone.R;
 import com.example.revic_capstone.view_event_page;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import Models.Events;
 import Models.MostRated;
+import Models.Ratings;
 import Models.Users;
 
 public class AdapterMostRatedItem extends RecyclerView.Adapter<AdapterMostRatedItem.ItemViewHolder> {
@@ -53,6 +60,9 @@ public class AdapterMostRatedItem extends RecyclerView.Adapter<AdapterMostRatedI
         String eventsId = mostRated.getEventsId();
 
         holder.tv_eventName.setText(eventName);
+
+        generateRatingAverage(eventsId, holder);
+
         holder.tv_userRatingCount.setText("("+ratingsCount+")");
         holder.rb_userRating.setRating(ratingsCount);
 
@@ -72,6 +82,45 @@ public class AdapterMostRatedItem extends RecyclerView.Adapter<AdapterMostRatedI
             }
         });
 
+    }
+
+    private void generateRatingAverage(String eventsId, ItemViewHolder holder) {
+
+        DatabaseReference ratingDatabase = FirebaseDatabase.getInstance().getReference("Ratings");
+        Query query = ratingDatabase.orderByChild("ratingOfId").equalTo(eventsId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                int counter = 0;
+                double totalRating = 0, tempRatingValue = 0, averageRating = 0;
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Ratings ratings = dataSnapshot.getValue(Ratings.class);
+                        tempRatingValue = ratings.getRatingValue();
+                        totalRating = totalRating + tempRatingValue;
+                        counter++;
+                    }
+
+                    averageRating = totalRating / counter;
+                    String ratingCounter = "(" + String.valueOf(averageRating) + ")";
+
+                    holder.tv_userRatingCount.setText(ratingCounter);
+                    holder.rb_userRating.setRating((float) averageRating);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override

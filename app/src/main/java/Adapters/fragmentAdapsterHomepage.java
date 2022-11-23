@@ -41,8 +41,6 @@ public class fragmentAdapsterHomepage extends FragmentStateAdapter {
             case 5:
                 return new NearMeFragment();
 
-            case 6:
-                return new MyApplicationFragment();
 
         }
 

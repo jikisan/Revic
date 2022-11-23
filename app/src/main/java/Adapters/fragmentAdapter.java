@@ -8,6 +8,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import Fragments.EventsFragment;
 import Fragments.MostConnectedFragment;
+import Fragments.MyApplicationFragment;
+import Fragments.OngoingContractMusician;
 import Fragments.PhotosFragment;
 import Fragments.PostsFragment;
 import Fragments.PostsFragmentInMyProfile;
@@ -27,6 +29,10 @@ public class fragmentAdapter extends FragmentStateAdapter {
                 return new PhotosFragment();
             case 2:
                 return new VideosFragment();
+            case 3:
+                return new MyApplicationFragment();
+            case 4:
+                return new OngoingContractMusician();
         }
 
         return new PostsFragmentInMyProfile();
@@ -34,6 +40,6 @@ public class fragmentAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 5;
     }
 }

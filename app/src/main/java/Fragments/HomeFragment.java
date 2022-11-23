@@ -70,7 +70,6 @@ public class HomeFragment extends Fragment {
 
         setRef(view);
         generateUserData(view);
-
         generateRecyclerLayout();
         clickListeners();
 
@@ -92,6 +91,8 @@ public class HomeFragment extends Fragment {
 
 
     private void generateUserData(View view) {
+
+
 
         TextModifier textModifier = new TextModifier();
 
@@ -176,7 +177,6 @@ public class HomeFragment extends Fragment {
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.applied));
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.rated));
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.near_me));
-        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.my_application));
 
         FragmentManager fragmentManager = getChildFragmentManager();
         adapter = new fragmentAdapsterHomepage(fragmentManager, getLifecycle());
@@ -265,7 +265,9 @@ public class HomeFragment extends Fragment {
 
             if(s.isEmpty())
             {
+
                 arr.clear();
+
             }
 
             adapterUsersItem = new AdapterUsersItem(arr);
@@ -274,6 +276,7 @@ public class HomeFragment extends Fragment {
 
         if(adapterUsersItem != null)
         {
+            recyclerView_searches.setVisibility(View.VISIBLE);
             adapterUsersItem.setOnItemClickListener(new AdapterUsersItem.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position) {

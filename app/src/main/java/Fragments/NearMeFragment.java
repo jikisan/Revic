@@ -184,7 +184,6 @@ public class NearMeFragment extends Fragment {
             // When permission is not granted
             // Call method
 
-
             requestPermissions(
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
         }

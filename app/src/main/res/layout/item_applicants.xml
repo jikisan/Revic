@@ -48,20 +48,21 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_message" />
 
     <TextView
-        android:id="@+id/tv_viewProfileBtn"
+        android:id="@+id/tv_declined"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/rounded100"
-        android:text="VIEW PROFILE"
+        android:text="DECLINE"
         android:textSize="12sp"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:padding="12dp"
-        app:backgroundTint="@color/dark_orange"
+        app:backgroundTint="@color/red_btn_bg_pressed_color"
         app:layout_constraintStart_toEndOf="@+id/tv_acceptApplicant"
         app:layout_constraintTop_toBottomOf="@+id/tv_message" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

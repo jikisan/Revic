@@ -70,7 +70,7 @@ public class PostEventsFragment extends Fragment {
     private Button btn_post;
     private ImageView iv_eventBannerPhoto;
     private TextView tv_uploadPhoto, tv_startTime, tv_endTime, tv_address, tv_back, tv_dateSched;
-    private EditText et_projectName, et_specialInstruction;
+    private EditText et_projectName, et_specialInstruction, et_eventPrice;
 
     private Uri imageUri;
     private Geocoder geocoder;
@@ -295,6 +295,8 @@ public class PostEventsFragment extends Fragment {
         String time_end = tv_endTime.getText().toString();
         String eventDescription = et_specialInstruction.getText().toString();
         String imageName = imageUri.getLastPathSegment();
+        String eventPriceInString = et_eventPrice.getText().toString();
+        double eventPriceInDouble = Double.parseDouble(eventPriceInString);
         int rating = 0;
         int applicants = 0;
 
@@ -308,7 +310,7 @@ public class PostEventsFragment extends Fragment {
                         final String imageUrl = uri.toString();
 
                         Events events = new Events(imageName, imageUrl, eventName, eventAddress, eventDateSched, time_start, time_end, eventDescription,
-                                dateTimeInMillis, timeCreated, dateCreated, rating, latString, longString, applicants, userID);
+                                dateTimeInMillis, timeCreated, dateCreated, rating, latString, longString, applicants, userID, eventPriceInDouble);
 
                         eventDatabase.push().setValue(events).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -425,6 +427,7 @@ public class PostEventsFragment extends Fragment {
 
         et_projectName = view.findViewById(R.id.et_projectName);
         et_specialInstruction = view.findViewById(R.id.et_specialInstruction);
+        et_eventPrice = view.findViewById(R.id.et_eventPrice);
 
         tv_startTime = view.findViewById(R.id.tv_startTime);
         tv_address = view.findViewById(R.id.et_address);
@@ -438,7 +441,6 @@ public class PostEventsFragment extends Fragment {
         tv_address.setFocusable(false);
 
     }
-
 
     private void PickImage() {
 

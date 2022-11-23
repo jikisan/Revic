@@ -134,6 +134,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/tv_postOrEvents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Events"
@@ -194,7 +195,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Posts"
+                android:text="Ratings"
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -275,7 +276,6 @@
         android:id="@+id/vp_viewPager2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

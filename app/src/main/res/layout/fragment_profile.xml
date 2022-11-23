@@ -61,7 +61,6 @@
             android:id="@+id/linearLayout5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -122,6 +121,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/tv_postOrEvents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Events"
@@ -182,7 +182,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Posts"
+                android:text="Reviews"
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -273,6 +273,7 @@
             android:id="@+id/expansionLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
             app:expansion_expanded="false">
 
             <LinearLayout
@@ -281,6 +282,20 @@
                 android:background="@drawable/rounded5"
                 android:padding="4dp"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_myWallet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="My Wallet"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:drawableEnd="@drawable/wallet"
+                    android:layout_gravity="right"
+                    android:drawablePadding="8dp"
+                    android:background="@color/white"
+                    />
 
                 <TextView
                     android:id="@+id/tv_editProfile"
@@ -340,9 +355,9 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:textSize="18sp"
-                    android:textColor="@color/red_btn_bg_pressed_color"
+                    android:textColor="#FF0000"
                     android:drawableEnd="@drawable/logout"
-                    android:drawableTint="@color/red_btn_bg_pressed_color"
+                    android:drawableTint="#FF0000"
                     android:layout_gravity="right"
                     android:drawablePadding="8dp"
                     android:background="@color/white"

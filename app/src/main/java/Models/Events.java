@@ -18,15 +18,17 @@ public class Events {
     private String longitude;
     private int applicants;
     private String userID;
+    private double eventPrice;
 
     public Events() {
-
     }
 
     public Events(String imageName, String imageUrl, String eventName, String eventAddress,
                   String eventDateSched, String timeStart, String timeEnd, String eventDescription,
                   long dateTimeInMillis, String timeCreated, String dateCreated, int ratings,
-                  String latitude, String longitude, int applicants, String userID) {
+                  String latitude, String longitude, int applicants, String userID,
+                  double eventPrice) {
+
         this.imageName = imageName;
         this.imageUrl = imageUrl;
         this.eventName = eventName;
@@ -43,9 +45,8 @@ public class Events {
         this.longitude = longitude;
         this.applicants = applicants;
         this.userID = userID;
+        this.eventPrice = eventPrice;
     }
-
-
 
     public String getImageName() {
         return imageName;
@@ -173,5 +174,13 @@ public class Events {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public double getEventPrice() {
+        return eventPrice;
+    }
+
+    public void setEventPrice(double eventPrice) {
+        this.eventPrice = eventPrice;
     }
 }

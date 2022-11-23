@@ -11,15 +11,15 @@ public class Applications {
     private String status;
     private String eventImageUrl;
     private String eventName;
+    private String applicantImageUrl;
     private String applicantName;
 
     public Applications() {
     }
 
-    public Applications(String creatorUserId, String applicantUsersId, String eventId,
-                        String timeCreated, String dateCreated, long dateTimeInMillis,
-                        String status, String eventImageUrl, String eventName,
-                        String applicantName) {
+    public Applications(String creatorUserId, String applicantUsersId, String eventId, String timeCreated,
+                        String dateCreated, long dateTimeInMillis, String status, String eventImageUrl, String eventName,
+                        String applicantImageUrl, String applicantName) {
         this.creatorUserId = creatorUserId;
         this.applicantUsersId = applicantUsersId;
         this.eventId = eventId;
@@ -29,6 +29,7 @@ public class Applications {
         this.status = status;
         this.eventImageUrl = eventImageUrl;
         this.eventName = eventName;
+        this.applicantImageUrl = applicantImageUrl;
         this.applicantName = applicantName;
     }
 
@@ -102,6 +103,14 @@ public class Applications {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public String getApplicantImageUrl() {
+        return applicantImageUrl;
+    }
+
+    public void setApplicantImageUrl(String applicantImageUrl) {
+        this.applicantImageUrl = applicantImageUrl;
     }
 
     public String getApplicantName() {

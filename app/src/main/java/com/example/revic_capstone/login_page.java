@@ -158,13 +158,17 @@ public class login_page extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        startActivity(new Intent(getApplicationContext(), homepage.class));
+                                        Intent intent = new Intent(login_page.this, homepage.class);
+                                        intent.putExtra("myPosts", "1");
+                                        startActivity(intent);
                                         finish();
                                     }
                                 }
                                 else
                                 {
-                                    startActivity(new Intent(getApplicationContext(), homepage.class));
+                                    Intent intent = new Intent(login_page.this, homepage.class);
+                                    intent.putExtra("myPosts", "1");
+                                    startActivity(intent);
                                     finish();
                                 }
 

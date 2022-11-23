@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,13 +41,17 @@ import Adapters.fragmentAdapter;
 import Adapters.fragmentAdapterProfile;
 import Models.Chat;
 import Models.Connections;
+import Models.Ratings;
 import Models.Users;
 import Objects.TextModifier;
 
 public class profile_page extends AppCompatActivity {
 
     private LinearLayout backBtn, event_layout;
-    private TextView tv_userName, tv_messageBtn, tv_connectBtn, tv_disconnectBtn, tv_category, tv_noEvents, tv_connectionsCount;
+    private TextView tv_userName, tv_messageBtn, tv_connectBtn, tv_disconnectBtn, tv_category,
+            tv_noEvents, tv_connectionsCount, tv_postOrEvents, tv_eventsCount,
+            tv_postsCount, tv_userRating;
+    private RatingBar rb_userRating;
     private ImageView iv_userPhoto;
     private RecyclerView rv_eventRv;
 
@@ -57,7 +62,8 @@ public class profile_page extends AppCompatActivity {
 
     private StorageReference userStorage, photoStorage, videoStorage;
     private FirebaseUser user;
-    private DatabaseReference userDatabase, chatDatabase, connectionsDatabase;
+    private DatabaseReference userDatabase, chatDatabase, connectionsDatabase,
+            postDatabase, eventDatabase, ratingDatabase;
 
     private String userID, userIdFromSearch, chatUid, category;
     private int connections = 0, connectionsCount = 0, myConnections = 0;
@@ -80,14 +86,54 @@ public class profile_page extends AppCompatActivity {
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         chatDatabase = FirebaseDatabase.getInstance().getReference("Chats");
         connectionsDatabase = FirebaseDatabase.getInstance().getReference("Connections");
+        postDatabase = FirebaseDatabase.getInstance().getReference("Posts");
+        eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
+        ratingDatabase = FirebaseDatabase.getInstance().getReference("Ratings");
 
         photoStorage = FirebaseStorage.getInstance().getReference("Photos").child(userID);
         videoStorage = FirebaseStorage.getInstance().getReference("Videos").child(userID);
 
         setRef();
         generateUserData();
+        generateRatingAverage();
         clickListeners();
 
+    }
+
+    private void generateRatingAverage() {
+
+        Query query = ratingDatabase.orderByChild("ratingOfId").equalTo(userID);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                int counter = 0;
+                double totalRating = 0, tempRatingValue = 0, averageRating = 0;
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Ratings ratings = dataSnapshot.getValue(Ratings.class);
+                        tempRatingValue = ratings.getRatingValue();
+                        totalRating = totalRating + tempRatingValue;
+                        counter++;
+                    }
+
+                    averageRating = totalRating / counter;
+                    String ratingCounter = "(" + String.valueOf(averageRating) + ")";
+                    tv_postsCount.setText(counter+"");
+                    tv_userRating.setText(ratingCounter);
+                    rb_userRating.setRating((float) averageRating);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void generateUserData() {
@@ -129,11 +175,17 @@ public class profile_page extends AppCompatActivity {
                 {
 
                     generateTabLayout();
+                    tv_postOrEvents.setText("Posts");
+                    generatePostsData();
+
                 }
                 else
                 {
 
                     generateTabLayoutEvents();
+                    tv_postOrEvents.setText("Events");
+                    generateEventsData();
+
                 }
 
                 generateConnections();
@@ -166,6 +218,52 @@ public class profile_page extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void generateEventsData() {
+
+        Query query = eventDatabase.orderByChild("userID").equalTo(userIdFromSearch);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    long count = snapshot.getChildrenCount();
+                    tv_eventsCount.setText(count+"");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void generatePostsData() {
+
+        Query query = postDatabase.orderByChild("userId").equalTo(userIdFromSearch);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+
+                    long count = snapshot.getChildrenCount();
+                    tv_eventsCount.setText(count+"");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
@@ -423,9 +521,7 @@ public class profile_page extends AppCompatActivity {
 
     private void generateTabLayoutEvents() {
 
-        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.events));
-        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.my_application));
-        tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.ongoing));
+        tab_layout.addTab(tab_layout.newTab().setText("EVENTS"));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentAdapterProfile = new fragmentAdapterProfile(fragmentManager, getLifecycle());
@@ -467,9 +563,14 @@ public class profile_page extends AppCompatActivity {
         tv_disconnectBtn = findViewById(R.id.tv_disconnectBtn);
         tv_category = findViewById(R.id.tv_category);
         tv_connectionsCount = findViewById(R.id.tv_connectionsCount);
-
+        tv_eventsCount = findViewById(R.id.tv_eventsCount);
+        tv_postOrEvents = findViewById(R.id.tv_postOrEvents);
+        tv_userRating = findViewById(R.id.tv_userRating);
+        tv_postsCount = findViewById(R.id.tv_postsCount);
 
         iv_userPhoto = findViewById(R.id.iv_userPhoto);
+
+        rb_userRating = findViewById(R.id.rb_userRating);
 
         tab_layout = findViewById(R.id.tab_layout);
         vp_viewPager2 = findViewById(R.id.vp_viewPager2);

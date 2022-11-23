@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +36,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class video_view_page extends AppCompatActivity {
 
     private List<Videos> arrUrl = new ArrayList<Videos>();
-    private String userID, category, vidName, vidLink;
+    private String userID, category, vidName, vidLink, postUserId, myUserID;
     private int currentPosition;
 
     private ImageView iv_deletPhoto;
@@ -42,10 +44,16 @@ public class video_view_page extends AppCompatActivity {
     private VideoView videoView;
     private ProgressDialog progressDialog;
 
+    private DatabaseReference postsDatabase;
+    private FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_view_page);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        myUserID = user.getUid();
 
         setRef();
 
@@ -55,6 +63,11 @@ public class video_view_page extends AppCompatActivity {
         loadVid(vidLink);
 
         clickListeners();
+
+        if(!userID.equals(myUserID))
+        {
+            iv_deletPhoto.setVisibility(View.GONE);
+        }
     }
 
     private void clickListeners() {

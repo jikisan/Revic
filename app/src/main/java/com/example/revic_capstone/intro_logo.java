@@ -32,6 +32,7 @@ public class intro_logo extends AppCompatActivity {
                 if(!(user == null))
                 {
                     Intent intent = new Intent(intro_logo.this, homepage.class);
+                    intent.putExtra("myPosts", "1");
                     startActivity(intent);
                     finish();
 
