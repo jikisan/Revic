@@ -277,6 +277,7 @@
             app:expansion_expanded="false">
 
             <LinearLayout
+                android:id="@+id/layout_reviews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded5"
@@ -309,6 +310,19 @@
                     android:drawablePadding="8dp"
                     android:background="@color/white"
                     android:text="Edit Profile"/>
+
+                <TextView
+                    android:id="@+id/tv_myRatings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:drawableEnd="@drawable/rated"
+                    android:layout_gravity="right"
+                    android:drawablePadding="8dp"
+                    android:background="@color/white"
+                    android:text="My Ratings"/>
 
                 <TextView
                     android:id="@+id/tv_changePassword"
@@ -371,7 +385,6 @@
         </com.github.florent37.expansionpanel.ExpansionLayout>
 
     </LinearLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

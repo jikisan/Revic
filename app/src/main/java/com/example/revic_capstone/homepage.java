@@ -33,7 +33,7 @@ public class homepage extends AppCompatActivity {
 
     private FirebaseUser user;
     private DatabaseReference userDatabase;
-    private String userID, category, pageNumber, myCategory;
+    private String userID, pageNumber, myCategory;
 
     HomeFragment homeFragment = new HomeFragment();
     HomeFragmentForRestAndEO homeFragmentForRestAndEO = new HomeFragmentForRestAndEO();
@@ -58,7 +58,7 @@ public class homepage extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
 
-        generateCategory();
+
 
 
 
@@ -67,7 +67,8 @@ public class homepage extends AppCompatActivity {
             if(pageNumber.equals("3"))
             {
 
-                if( category.equals("Musician"))
+
+                if( myCategory.equals("Musician"))
                 {
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container, postPhotosAndVidFragment);
@@ -112,9 +113,9 @@ public class homepage extends AppCompatActivity {
 
                     case R.id.event:
 
-                        if(category != null)
+                        if(myCategory != null)
                         {
-                            if( category.equals("Musician"))
+                            if( myCategory.equals("Musician"))
                             {
                                 getSupportFragmentManager().beginTransaction().replace(R.id.container,postPhotosAndVidFragment).commit();
                                 return true;
@@ -144,27 +145,4 @@ public class homepage extends AppCompatActivity {
         });
     }
 
-    private void generateCategory() {
-
-        userDatabase.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                Users users = snapshot.getValue(Users.class);
-
-                if(users != null){
-
-                    category = users.getCategory();
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(homepage.this, "Error retrieving data.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
 }

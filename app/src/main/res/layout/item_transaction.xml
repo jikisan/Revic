@@ -39,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/LOADING"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@+id/tv_transNote"
         app:layout_constraintTop_toBottomOf="@+id/tv_transNote" />
 

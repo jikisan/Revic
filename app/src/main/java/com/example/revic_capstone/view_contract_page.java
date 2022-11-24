@@ -3,6 +3,7 @@ package com.example.revic_capstone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,15 +27,23 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import Models.Contracts;
 import Models.Events;
+import Models.Notifications;
 import Models.Ratings;
+import Models.Transactions;
 import Models.Users;
+import Models.Wallets;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class view_contract_page extends AppCompatActivity {
 
@@ -48,15 +57,22 @@ public class view_contract_page extends AppCompatActivity {
     private LinearLayout linearLayout7;
     private RatingBar rb_userRating;
 
+    private ProgressDialog progressDialog;
+    private SweetAlertDialog sDialog;
+
     private List<Events> arrEvents = new ArrayList<>();
     private List<String> arrEventsId = new ArrayList<>();
 
     private ProgressBar progressBar;
 
     private FirebaseUser user;
-    private DatabaseReference eventDatabase, contractDatabase, userDatabase, ratingDatabase;
+    private DatabaseReference eventDatabase, contractDatabase, userDatabase,
+            ratingDatabase, transactionDatabase, walletDatabase;
 
-    private String myUserId, eventId, contractId, employeeId;
+    private String myUserId, eventId, contractId, employeeId, walletId,
+            timeCreated, dateCreated, walletIdEmployee;
+    private long dateTimeInMillis;
+    private double eventPrice, fundAmount, fundAmountEmployee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,83 +90,63 @@ public class view_contract_page extends AppCompatActivity {
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         contractDatabase = FirebaseDatabase.getInstance().getReference("Contracts");
         ratingDatabase = FirebaseDatabase.getInstance().getReference("Ratings");
+        transactionDatabase = FirebaseDatabase.getInstance().getReference("Transactions");
+        walletDatabase = FirebaseDatabase.getInstance().getReference("Wallets");
+
+
 
         setRef();
+        generateEmployeeWalletData();
         generateContractData();
         generateMusicianData();
         generateRatingAverage();
+        generateWalletData();
+
         clickListeners();
     }
 
-    private void generateRatingAverage() {
 
-        Query query = ratingDatabase.orderByChild("ratingOfId").equalTo(employeeId);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                int counter = 0;
-                double totalRating = 0, tempRatingValue = 0, averageRating = 0;
-
-                if(snapshot.exists())
-                {
-                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                    {
-                        Ratings ratings = dataSnapshot.getValue(Ratings.class);
-                        tempRatingValue = ratings.getRatingValue();
-                        totalRating = totalRating + tempRatingValue;
-                        counter++;
-                    }
-
-                    averageRating = totalRating / counter;
-                    String ratingCounter = "(" + String.valueOf(counter) + ")";
-                    tv_userRatingCount.setText(ratingCounter);
-                    rb_userRating.setRating((float) averageRating);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     private void clickListeners() {
 
         iv_backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view_contract_page.this, homepage.class);
-                intent.putExtra("pageNumber", "5");
-                intent.putExtra("myCategory", "Event Organizer");
-                intent.putExtra("myPosts", "1");
-                startActivity(intent);
+                onBackPressed();
             }
         });
 
         btn_complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view_contract_page.this, "Contract Completed", Toast.LENGTH_SHORT).show();
 
-                HashMap<String, Object> hashMap = new HashMap<String, Object>();
-                hashMap.put("contractStatus", "done");
-                contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+            sDialog = new SweetAlertDialog(view_contract_page.this, SweetAlertDialog.WARNING_TYPE);
+            sDialog.setTitleText("Warning");
+            sDialog.setCancelText("Back");
+            sDialog.setConfirmButton("Submit", new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        linearLayout7.setVisibility(View.INVISIBLE);
-                        btn_rate.setVisibility(View.VISIBLE);
+                    progressDialog = new ProgressDialog(view_contract_page.this);
+                    progressDialog.setTitle("Processing...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
 
-                        tv_terminated.setVisibility(View.INVISIBLE);
-                        tv_ongoing.setVisibility(View.INVISIBLE);
-                        tv_done.setVisibility(View.VISIBLE);
-                    }
-                });
+                    HashMap<String, Object> hashMap = new HashMap<String, Object>();
+                    hashMap.put("contractStatus", "done");
+                    contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            addFunds();
+                        }
+                    });
 
 
+                }
+            });
+            sDialog.setContentText("Complete contract with \n" + tv_userName.getText() + "?");
+            sDialog.show();
 
 
             }
@@ -159,6 +155,9 @@ public class view_contract_page extends AppCompatActivity {
         btn_terminate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                refundFund();
+
                 Toast.makeText(view_contract_page.this, "Contract Terminated", Toast.LENGTH_SHORT).show();
 
                 String newValue = "terminated";
@@ -190,6 +189,189 @@ public class view_contract_page extends AppCompatActivity {
                 intent.putExtra("eventId", eventId);
                 intent.putExtra("employeeId", employeeId);
                 view.getContext().startActivity(intent);
+
+            }
+        });
+    }
+
+    private void addFunds() {
+
+        double newFundValue = eventPrice + fundAmountEmployee;
+
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put("userID", employeeId);
+        hashMap.put("fundAmount", newFundValue);
+
+        walletDatabase.child(walletIdEmployee).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                if(task.isSuccessful())
+                {
+                    updateTransactionData();
+
+                }
+
+            }
+        });
+    }
+
+    private void updateTransactionData() {
+
+        setUpDate();
+
+        String transactionType = "add";
+        String transactionNote = "Event income";
+
+        Transactions transactions = new Transactions(dateTimeInMillis, dateCreated, timeCreated,
+                transactionType, transactionNote, eventPrice, employeeId);
+
+        transactionDatabase.push().setValue(transactions).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+
+                generateNotification();
+
+            }
+        });
+
+    }
+
+    private void generateNotification() {
+
+        setUpDate();
+
+        DatabaseReference notificationDatabase = FirebaseDatabase.getInstance().getReference("Notifications");
+
+        String eventName = tv_eventName.getText().toString();
+
+        String notificationType = "payment";
+        String notificationMessage = "Fund has entered your wallet for event: " + eventName.toUpperCase();
+        String contractId = "";
+        String userId = employeeId;
+        String chatId = "";
+        String eventId = "";
+
+        Notifications notifications = new Notifications(dateTimeInMillis, dateCreated, timeCreated, notificationType,
+                notificationMessage, contractId, userId, chatId, eventId);
+
+        notificationDatabase.push().setValue(notifications).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                Toast.makeText(view_contract_page.this, "Contract Complete", Toast.LENGTH_SHORT).show();
+
+                linearLayout7.setVisibility(View.INVISIBLE);
+                btn_rate.setVisibility(View.VISIBLE);
+
+                tv_terminated.setVisibility(View.INVISIBLE);
+                tv_ongoing.setVisibility(View.INVISIBLE);
+                tv_done.setVisibility(View.VISIBLE);
+                sDialog.dismiss();
+                progressDialog.dismiss();
+
+            }
+        });
+    }
+
+
+    private void refundFund() {
+
+        double newFundValue = eventPrice + fundAmount;
+
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put("userID", myUserId);
+        hashMap.put("fundAmount", newFundValue);
+
+        walletDatabase.child(walletId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                if(task.isSuccessful())
+                {
+                    updateTransactionData(eventPrice);
+
+                }
+
+            }
+        });
+    }
+
+    private void updateTransactionData(double eventPrice) {
+
+        setUpDate();
+
+        String transactionType = "add";
+        String transactionNote = "Refund (Terminated contract)";
+
+        Transactions transactions = new Transactions(dateTimeInMillis, dateCreated, timeCreated,
+                transactionType, transactionNote, eventPrice, myUserId);
+
+        transactionDatabase.push().setValue(transactions).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                updateContractData();
+
+            }
+        });
+
+    }
+
+    private void updateContractData() {
+
+        String newValue = "terminated";
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put("contractStatus", newValue);
+
+        contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                Toast.makeText(view_contract_page.this, "Contract Terminated", Toast.LENGTH_SHORT).show();
+
+                linearLayout7.setVisibility(View.INVISIBLE);
+
+                tv_done.setVisibility(View.INVISIBLE);
+                tv_ongoing.setVisibility(View.INVISIBLE);
+                tv_terminated.setVisibility(View.VISIBLE);
+
+            }
+        });
+    }
+
+
+    private void generateRatingAverage() {
+
+        Query query = ratingDatabase.orderByChild("ratingOfId").equalTo(employeeId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                int counter = 0;
+                double totalRating = 0, tempRatingValue = 0, averageRating = 0;
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Ratings ratings = dataSnapshot.getValue(Ratings.class);
+                        tempRatingValue = ratings.getRatingValue();
+                        totalRating = totalRating + tempRatingValue;
+                        counter++;
+                    }
+
+                    averageRating = totalRating / counter;
+                    String ratingCounter = "(" + String.valueOf(counter) + ")";
+                    tv_userRatingCount.setText(ratingCounter);
+                    rb_userRating.setRating((float) averageRating);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
@@ -296,12 +478,13 @@ public class view_contract_page extends AppCompatActivity {
                     Events events = snapshot.getValue(Events.class);
 
                     String eventName = events.getEventName();
-                    double eventPrice = events.getEventPrice();
+                    eventPrice = events.getEventPrice();
                     String eventAddress = events.getEventAddress();
                     String eventDate = events.getEventDateSched();
                     String eventStart = events.getTimeStart();
                     String eventEnd = events.getTimeEnd();
                     String eventDescription = events.getEventDescription();
+                    eventPrice = events.getEventPrice();
 
                     tv_eventName.setText(eventName);
                     tv_eventAddress.setText(eventAddress);
@@ -320,6 +503,66 @@ public class view_contract_page extends AppCompatActivity {
             }
         });
     }
+
+    private void generateWalletData() {
+
+        Query query = walletDatabase.orderByChild("userID").equalTo(myUserId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Wallets wallets = dataSnapshot.getValue(Wallets.class);
+
+                        walletId = dataSnapshot.getKey().toString();
+                        fundAmount = wallets.getFundAmount();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void generateEmployeeWalletData() {
+
+        Query query = walletDatabase.orderByChild("userID").equalTo(employeeId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Wallets wallets = dataSnapshot.getValue(Wallets.class);
+
+                        walletIdEmployee = dataSnapshot.getKey().toString();
+                        fundAmountEmployee = wallets.getFundAmount();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
     private void setRef() {
 
@@ -356,5 +599,20 @@ public class view_contract_page extends AppCompatActivity {
         btn_rate = findViewById(R.id.btn_rate);
 
         linearLayout7 = findViewById(R.id.linearLayout7);
+    }
+
+    private void setUpDate() {
+
+        Date currentTime = Calendar.getInstance().getTime();
+        String dateTime = DateFormat.getDateTimeInstance().format(currentTime);
+
+        SimpleDateFormat formatDateTimeInMillis = new SimpleDateFormat("yyyyMMddhhmma");
+        SimpleDateFormat formatDate = new SimpleDateFormat("MMM-dd-yyyy");
+        SimpleDateFormat formatTime = new SimpleDateFormat("hh:mm a");
+
+        dateTimeInMillis = Calendar.getInstance().getTimeInMillis();
+        timeCreated = formatTime.format(Date.parse(dateTime));
+        dateCreated = formatDate.format(Date.parse(dateTime));
+
     }
 }

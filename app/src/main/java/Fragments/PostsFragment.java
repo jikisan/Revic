@@ -35,6 +35,7 @@ import Models.Users;
 
 public class PostsFragment extends Fragment {
 
+    private List<String> arrPostId = new ArrayList<>();
     private List<Posts> arrPosts = new ArrayList<>();
     private List<Users> arrUsers = new ArrayList<>();
 
@@ -74,7 +75,7 @@ public class PostsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView_users.setLayoutManager(linearLayoutManager);
 
-        adapterPostsItem = new AdapterPostsItem(arrPosts, arrUsers, getContext());
+        adapterPostsItem = new AdapterPostsItem(arrPosts, arrUsers, getContext(), arrPostId);
         recyclerView_users.setAdapter(adapterPostsItem);
 
         getViewHolderValues();
@@ -93,9 +94,10 @@ public class PostsFragment extends Fragment {
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Posts posts = dataSnapshot.getValue(Posts.class);
-                        String postUsersId = posts.getUserId();
+                        String postId = posts.getUserId();
 
                         arrPosts.add(posts);
+                        arrPostId.add(postId);
 
                     }
 
@@ -108,6 +110,7 @@ public class PostsFragment extends Fragment {
 
                 }
 
+                Collections.reverse(arrPostId);
                 Collections.reverse(arrPosts);
                 progressBar.setVisibility(View.GONE);
                 adapterPostsItem.notifyDataSetChanged();

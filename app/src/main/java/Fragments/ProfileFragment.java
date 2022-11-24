@@ -27,6 +27,7 @@ import com.example.revic_capstone.homepage;
 import com.example.revic_capstone.intro_logo;
 import com.example.revic_capstone.my_wallet_page;
 import com.example.revic_capstone.profile_user_page;
+import com.example.revic_capstone.view_ratings;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
@@ -60,8 +61,8 @@ public class ProfileFragment extends Fragment {
 
     private TextView tv_userName, tv_category, tv_connectionsCount, tv_postBtn;
     private TextView  tv_editProfile, tv_changePassword, tv_privacyPolicy, tv_aboutUs, tv_logout,
-            tv_postOrEvents, tv_eventsCount, tv_userRating, tv_postsCount, tv_myWallet;
-    private LinearLayout event_layout;
+            tv_postOrEvents, tv_eventsCount, tv_userRating, tv_postsCount, tv_myWallet, tv_myRatings;
+    private LinearLayout linearLayout5, linear2;
     private ImageView iv_userPhoto;
     private ProgressDialog progressDialog;
     private RatingBar rb_userRating;
@@ -253,6 +254,35 @@ public class ProfileFragment extends Fragment {
 
     private void clickListeners() {
 
+        tv_myRatings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), view_ratings.class);
+                intent.putExtra("ratingOfId", userID);
+                startActivity(intent);
+            }
+        });
+
+        linearLayout5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getContext(), view_ratings.class);
+                intent.putExtra("ratingOfId", userID);
+                startActivity(intent);
+            }
+        });
+
+        linear2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getContext(), view_ratings.class);
+                intent.putExtra("ratingOfId", userID);
+                startActivity(intent);
+            }
+        });
+
         tv_editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -320,63 +350,64 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                checkIfWalletExist();
+                Intent intent = new Intent(getContext(), my_wallet_page.class);
+                startActivity(intent);
 
             }
         });
 
     }
-
-    private void checkIfWalletExist() {
-
-        Query query = walletDatabase.orderByChild("userID").equalTo(userID);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if(snapshot.exists())
-                {
-
-                    Intent intent = new Intent(getContext(), my_wallet_page.class);
-                    startActivity(intent);
-
-
-                }
-                else
-                {
-                    createWallet();
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    private void createWallet() {
-
-        double i = 0;
-
-        Wallets wallets = new Wallets(userID, i);
-
-        walletDatabase.push().setValue(wallets).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-                if(task.isSuccessful())
-                {
-                    Intent intent = new Intent(getContext(), my_wallet_page.class);
-                    startActivity(intent);
-                }
-
-            }
-        });
-    }
+//
+//    private void checkIfWalletExist() {
+//
+//        Query query = walletDatabase.orderByChild("userID").equalTo(userID);
+//
+//        query.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                if(snapshot.exists())
+//                {
+//
+//                    Intent intent = new Intent(getContext(), my_wallet_page.class);
+//                    startActivity(intent);
+//
+//
+//                }
+//                else
+//                {
+//                    createWallet();
+//                }
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
+//
+//    private void createWallet() {
+//
+//        double i = 0;
+//
+//        Wallets wallets = new Wallets(userID, i);
+//
+//        walletDatabase.push().setValue(wallets).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//
+//                if(task.isSuccessful())
+//                {
+//                    Intent intent = new Intent(getContext(), my_wallet_page.class);
+//                    startActivity(intent);
+//                }
+//
+//            }
+//        });
+//    }
 
     private void generateTabLayout() {
 
@@ -470,8 +501,12 @@ public class ProfileFragment extends Fragment {
         tv_userRating = view.findViewById(R.id.tv_userRating);
         tv_postsCount = view.findViewById(R.id.tv_postsCount);
         tv_myWallet = view.findViewById(R.id.tv_myWallet);
+        tv_myRatings = view.findViewById(R.id.tv_myRatings);
 
         rb_userRating = view.findViewById(R.id.rb_userRating);
+
+        linear2 = view.findViewById(R.id.linear2);
+        linearLayout5 = view.findViewById(R.id.linearLayout5);
 
         tab_layout = view.findViewById(R.id.tab_layout);
         vp_viewPager2 = view.findViewById(R.id.vp_viewPager2);

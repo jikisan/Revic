@@ -9,8 +9,8 @@
         android:color="#dddddd" />
     <corners
         android:topLeftRadius="100dp"
-        android:topRightRadius="100dp"
         android:bottomLeftRadius="100dp"
+        android:bottomRightRadius="100dp"
         />
 
     <padding

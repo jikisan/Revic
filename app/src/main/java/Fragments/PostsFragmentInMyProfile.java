@@ -32,6 +32,7 @@ import Models.Users;
 
 public class PostsFragmentInMyProfile extends Fragment {
 
+    private List<String> arrPostId = new ArrayList<>();
     private List<Posts> arrPosts = new ArrayList<>();
     private List<Users> arrUsers = new ArrayList<>();
 
@@ -72,7 +73,7 @@ public class PostsFragmentInMyProfile extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView_users.setLayoutManager(linearLayoutManager);
 
-        adapterPostsItem = new AdapterPostsItem(arrPosts, arrUsers, getContext());
+        adapterPostsItem = new AdapterPostsItem(arrPosts, arrUsers, getContext(), arrPostId);
         recyclerView_users.setAdapter(adapterPostsItem);
 
         getViewHolderValues();
@@ -88,10 +89,12 @@ public class PostsFragmentInMyProfile extends Fragment {
                 if(snapshot.exists())
                 {
                     arrPosts.clear();
+                    arrPostId.clear();
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Posts posts = dataSnapshot.getValue(Posts.class);
                         String postUsersId = posts.getUserId();
+                        String postId = dataSnapshot.getKey().toString();
 
                         if(myPosts != null && myPosts.equals("2"))
                         {
@@ -99,12 +102,14 @@ public class PostsFragmentInMyProfile extends Fragment {
                             {
 //                                generateUsersData(postUsersId);
                                 arrPosts.add(posts);
+                                arrPostId.add(postId);
                             }
 
                         }else if(myUserId.equals(postUsersId))
 
                         {
                             arrPosts.add(posts);
+                            arrPostId.add(postId);
                         }
 
 
@@ -121,6 +126,7 @@ public class PostsFragmentInMyProfile extends Fragment {
                 }
 
                 Collections.reverse(arrPosts);
+                Collections.reverse(arrPostId);
                 progressBar.setVisibility(View.GONE);
                 adapterPostsItem.notifyDataSetChanged();
 

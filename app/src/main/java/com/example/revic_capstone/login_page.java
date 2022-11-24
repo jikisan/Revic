@@ -45,7 +45,6 @@ public class login_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
         userType = getIntent().getStringExtra("user");
-        projId = getIntent().getStringExtra("projectIdFromIntent");
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         setRef();

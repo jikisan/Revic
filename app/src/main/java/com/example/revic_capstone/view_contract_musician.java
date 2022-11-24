@@ -3,6 +3,7 @@ package com.example.revic_capstone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,16 +23,23 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import Models.Contracts;
 import Models.Events;
+import Models.Transactions;
+import Models.Wallets;
 
 public class view_contract_musician extends AppCompatActivity {
 
@@ -47,9 +55,12 @@ public class view_contract_musician extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private FirebaseUser user;
-    private DatabaseReference eventDatabase, contractDatabase, userDatabase;
+    private DatabaseReference eventDatabase, contractDatabase, walletDatabase, transactionDatabase;
 
-    private String myUserId, eventId, contractId, creatorId;
+    private String myUserId, eventId, contractId, creatorId, walletId,
+            timeCreated, dateCreated;
+    private double eventPrice, fundAmount;
+    private long dateTimeInMillis;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +75,14 @@ public class view_contract_musician extends AppCompatActivity {
         eventId = getIntent().getStringExtra("eventId");
 
         eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
-        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        walletDatabase = FirebaseDatabase.getInstance().getReference("Wallets");
         contractDatabase = FirebaseDatabase.getInstance().getReference("Contracts");
-
+        transactionDatabase = FirebaseDatabase.getInstance().getReference("Transactions");
 
         setRef();
         generateContractData();
         generateEventData();
+        generateWalletData();
         clickListeners();
     }
 
@@ -90,23 +102,7 @@ public class view_contract_musician extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Toast.makeText(view_contract_musician.this, "Contract Terminated", Toast.LENGTH_SHORT).show();
-
-                String newValue = "terminated";
-                HashMap<String, Object> hashMap = new HashMap<String, Object>();
-                hashMap.put("contractStatus", newValue);
-
-                contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-
-                        btn_terminate.setVisibility(View.INVISIBLE);
-                        tv_done.setVisibility(View.INVISIBLE);
-                        tv_ongoing.setVisibility(View.INVISIBLE);
-                        tv_terminated.setVisibility(View.VISIBLE);
-
-                    }
-                });
+                refundFund();
 
             }
         });
@@ -124,6 +120,73 @@ public class view_contract_musician extends AppCompatActivity {
             }
         });
     }
+
+
+    private void refundFund() {
+
+        double newFundValue = eventPrice + fundAmount;
+
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put("userID", creatorId);
+        hashMap.put("fundAmount", newFundValue);
+
+        walletDatabase.child(walletId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                if(task.isSuccessful())
+                {
+                    updateTransactionData(eventPrice);
+
+                }
+
+            }
+        });
+    }
+
+    private void updateTransactionData(double eventPrice) {
+
+        setUpDate();
+
+        String transactionType = "add";
+        String transactionNote = "Refund (Terminated contract)";
+
+        Transactions transactions = new Transactions(dateTimeInMillis, dateCreated, timeCreated,
+                transactionType, transactionNote, eventPrice, creatorId);
+
+        transactionDatabase.push().setValue(transactions).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                updateContractData();
+
+            }
+        });
+
+    }
+
+    private void updateContractData() {
+
+        String newValue = "terminated";
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put("contractStatus", newValue);
+
+        contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                Toast.makeText(view_contract_musician.this, "Contract Terminated", Toast.LENGTH_SHORT).show();
+
+                btn_terminate.setVisibility(View.INVISIBLE);
+                tv_done.setVisibility(View.INVISIBLE);
+                tv_ongoing.setVisibility(View.INVISIBLE);
+                tv_terminated.setVisibility(View.VISIBLE);
+
+            }
+        });
+    }
+
+
 
     private void generateContractData() {
 
@@ -186,7 +249,7 @@ public class view_contract_musician extends AppCompatActivity {
                     String eventStart = events.getTimeStart();
                     String eventEnd = events.getTimeEnd();
                     String eventDescription = events.getEventDescription();
-                    double eventPrice = events.getEventPrice();
+                    eventPrice = events.getEventPrice();
 
                     Picasso.get().load(imageUrl).fit().centerCrop().into(iv_eventPhoto);
                     tv_eventName.setText(eventName);
@@ -210,6 +273,38 @@ public class view_contract_musician extends AppCompatActivity {
         });
     }
 
+    private void generateWalletData() {
+
+        Query query = walletDatabase.orderByChild("userID").equalTo(creatorId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Wallets wallets = dataSnapshot.getValue(Wallets.class);
+
+                        walletId = dataSnapshot.getKey().toString();
+                        fundAmount = wallets.getFundAmount();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+
+
     private void setRef() {
 
         progressBar = findViewById(R.id.progressBar);
@@ -231,6 +326,21 @@ public class view_contract_musician extends AppCompatActivity {
 
         btn_terminate = findViewById(R.id.btn_terminate);
         btn_rate = findViewById(R.id.btn_rate);
+
+    }
+
+    private void setUpDate() {
+
+        Date currentTime = Calendar.getInstance().getTime();
+        String dateTime = DateFormat.getDateTimeInstance().format(currentTime);
+
+        SimpleDateFormat formatDateTimeInMillis = new SimpleDateFormat("yyyyMMddhhmma");
+        SimpleDateFormat formatDate = new SimpleDateFormat("MMM-dd-yyyy");
+        SimpleDateFormat formatTime = new SimpleDateFormat("hh:mm a");
+
+        dateTimeInMillis = Calendar.getInstance().getTimeInMillis();
+        timeCreated = formatTime.format(Date.parse(dateTime));
+        dateCreated = formatDate.format(Date.parse(dateTime));
 
     }
 }

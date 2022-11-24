@@ -5,15 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,18 +24,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
-import Adapters.AdapterEventsItem;
 import Adapters.AdapterTransactionsItem;
-import Models.Events;
-import Models.Posts;
 import Models.Transactions;
-import Models.Users;
 import Models.Wallets;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class my_wallet_page extends AppCompatActivity {
 
@@ -50,7 +52,11 @@ public class my_wallet_page extends AppCompatActivity {
 
     private List<Wallets> arrWallets = new ArrayList<Wallets>();
 
-    private String myUserId;
+    private String myUserId, walletId, timeCreated, dateCreated;
+    private double myFundAmount;
+    private long dateTimeInMillis;
+    private ProgressDialog progressDialog;
+    private SweetAlertDialog sDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +92,13 @@ public class my_wallet_page extends AppCompatActivity {
 
         Query query = transactionDatabase.orderByChild("ownerID").equalTo(myUserId);
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if(snapshot.exists())
                 {
+                    arrTransactions.clear();
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Transactions transactions = dataSnapshot.getValue(Transactions.class);
@@ -123,7 +130,7 @@ public class my_wallet_page extends AppCompatActivity {
 
         Query query = walletDatabase.orderByChild("userID").equalTo(myUserId);
 
-        walletDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        walletDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -132,10 +139,16 @@ public class my_wallet_page extends AppCompatActivity {
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Wallets wallets = dataSnapshot.getValue(Wallets.class);
+                        String walletUserId = wallets.getUserID();
 
-                        double fundAmount = wallets.getFundAmount();
+                        if(walletUserId.equals(myUserId))
+                        {
+                            walletId = dataSnapshot.getKey().toString();
+                            myFundAmount = wallets.getFundAmount();
 
-                        tv_fundBalance.setText(fundAmount + "");
+                            tv_fundBalance.setText((int)myFundAmount + "");
+                        }
+
                     }
 
                 }
@@ -174,7 +187,87 @@ public class my_wallet_page extends AppCompatActivity {
         tv_withdrawBalanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(my_wallet_page.this, "Withdraw button clicked", Toast.LENGTH_SHORT).show();
+
+                sDialog = new SweetAlertDialog(my_wallet_page.this, SweetAlertDialog.WARNING_TYPE);
+                sDialog.setTitleText("Withdraw Funds");
+                sDialog.setCancelText("Back");
+                sDialog.setConfirmButton("Submit", new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                progressDialog = new ProgressDialog(my_wallet_page.this);
+                                progressDialog.setTitle("Processing review...");
+                                progressDialog.setCancelable(false);
+                                progressDialog.show();
+
+                                deductFunds();
+
+                            }
+                        });
+                sDialog.setContentText("Withdraw Php " + myFundAmount + "?");
+                sDialog.show();
+
+
+
+            }
+        });
+    }
+
+
+    private void deductFunds() {
+
+        if(myFundAmount <= 0 ){
+            Toast.makeText(my_wallet_page.this, "Withdrawal failed", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            updateWalletData();
+
+        }
+    }
+
+    private void updateWalletData() {
+
+        double newFundValue = myFundAmount - myFundAmount;
+
+        String transFundInString = tv_fundBalance.getText().toString();
+        double transFundInDouble = Double.parseDouble(transFundInString);
+
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put("userID", myUserId);
+        hashMap.put("fundAmount", newFundValue);
+
+        walletDatabase.child(walletId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                updateTransactionData(newFundValue, transFundInDouble);
+            }
+        });
+    }
+
+    private void updateTransactionData(double newFundValue, double transFundInDouble) {
+
+        setUpDate();
+
+        String transactionType = "deduct";
+        String transactionNote = "Fund Withdrawal";
+
+
+
+        Transactions transactions = new Transactions(dateTimeInMillis, dateCreated, timeCreated,
+                transactionType, transactionNote, transFundInDouble, myUserId);
+
+        transactionDatabase.push().setValue(transactions).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                Toast.makeText(my_wallet_page.this, "Withdrawal Success!", Toast.LENGTH_SHORT).show();
+                tv_fundBalance.setText(newFundValue+"");
+                adapterTransactionsItem.notifyDataSetChanged();
+                sDialog.dismiss();
+                progressDialog.dismiss();
+
             }
         });
     }
@@ -190,4 +283,20 @@ public class my_wallet_page extends AppCompatActivity {
 
         iv_addFund = findViewById(R.id.iv_addFund);
     }
+
+    private void setUpDate() {
+
+        Date currentTime = Calendar.getInstance().getTime();
+        String dateTime = DateFormat.getDateTimeInstance().format(currentTime);
+
+        SimpleDateFormat formatDateTimeInMillis = new SimpleDateFormat("yyyyMMddhhmma");
+        SimpleDateFormat formatDate = new SimpleDateFormat("MMM-dd-yyyy");
+        SimpleDateFormat formatTime = new SimpleDateFormat("hh:mm a");
+
+        dateTimeInMillis = Calendar.getInstance().getTimeInMillis();
+        timeCreated = formatTime.format(Date.parse(dateTime));
+        dateCreated = formatDate.format(Date.parse(dateTime));
+
+    }
+
 }

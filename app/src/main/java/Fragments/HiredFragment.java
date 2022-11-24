@@ -90,6 +90,8 @@ public class HiredFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
+                    arrContracts.clear();
+
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Contracts contracts = dataSnapshot.getValue(Contracts.class);

@@ -47,7 +47,7 @@ import Objects.TextModifier;
 
 public class profile_page extends AppCompatActivity {
 
-    private LinearLayout backBtn, event_layout;
+    private LinearLayout backBtn, linearLayout5, linear2;
     private TextView tv_userName, tv_messageBtn, tv_connectBtn, tv_disconnectBtn, tv_category,
             tv_noEvents, tv_connectionsCount, tv_postOrEvents, tv_eventsCount,
             tv_postsCount, tv_userRating;
@@ -65,7 +65,7 @@ public class profile_page extends AppCompatActivity {
     private DatabaseReference userDatabase, chatDatabase, connectionsDatabase,
             postDatabase, eventDatabase, ratingDatabase;
 
-    private String userID, userIdFromSearch, chatUid, category;
+    private String userID, userIdFromSearch, chatUid1, chatUid2, category;
     private int connections = 0, connectionsCount = 0, myConnections = 0;
 
     private ArrayList<Users> arrUsers = new ArrayList<>();
@@ -304,6 +304,26 @@ public class profile_page extends AppCompatActivity {
 
     private void clickListeners() {
 
+        linearLayout5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(profile_page.this, view_ratings.class);
+                intent.putExtra("ratingOfId", userIdFromSearch);
+                startActivity(intent);
+            }
+        });
+
+        linear2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(profile_page.this, view_ratings.class);
+                intent.putExtra("ratingOfId", userIdFromSearch);
+                startActivity(intent);
+            }
+        });
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -318,9 +338,16 @@ public class profile_page extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                chatUid1 = userIdFromSearch + "_" + userID;
+                chatUid2 = userID + "_" + userIdFromSearch;
 
-                validatePrevChatExistence();
 
+                Intent intent = new Intent(profile_page.this, chat_activity.class);
+                intent.putExtra("userIdFromSearch", userIdFromSearch);
+                intent.putExtra("needNotification", "1");
+                intent.putExtra("chatUid1", chatUid1);
+                intent.putExtra("chatUid2", chatUid2);
+                startActivity(intent);
 
 
             }
@@ -432,55 +459,57 @@ public class profile_page extends AppCompatActivity {
 
     private void validatePrevChatExistence() {
 
-        chatDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//        chatDatabase.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                if(snapshot.exists())
+//                {
+//                    for (DataSnapshot dataSnapshot : snapshot.getChildren())
+//                    {
+//                        Chat chat = dataSnapshot.getValue(Chat.class);
+//
+//                        String uid1 = userID + "_" + userIdFromSearch;
+//                        String uid2 = userIdFromSearch + "_" + userID;
+//
+//                        String checkChatUid = dataSnapshot.getKey().toString();
+//
+//                        if(checkChatUid.equals(uid1))
+//                        {
+//                            chatUid = uid1;
+//                        }
+//                        else if (checkChatUid.equals(uid2))
+//                        {
+//                            chatUid = uid2;
+//                        }
+//                        else
+//                        {
+//                            chatUid = userID + "_" + userIdFromSearch;
+//                        }
+//
+//                    }
+//                }
+//                else
+//                {
+//                    chatUid = userID + "_" + userIdFromSearch;
+//                }
+//
+//
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
 
-                if(snapshot.exists())
-                {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren())
-                    {
-                        Chat chat = dataSnapshot.getValue(Chat.class);
-
-                        String uid1 = userID + "_" + userIdFromSearch;
-                        String uid2 = userIdFromSearch + "_" + userID;
-
-                        String checkChatUid = dataSnapshot.getKey().toString();
-
-                        if(checkChatUid.equals(uid1))
-                        {
-                            chatUid = uid1;
-                        }
-                        else if (checkChatUid.equals(uid2))
-                        {
-                            chatUid = uid2;
-                        }
-                        else
-                        {
-                            chatUid = userID + "_" + userIdFromSearch;
-                        }
-
-                    }
-                }
-                else
-                {
-                    chatUid = userID + "_" + userIdFromSearch;
-                }
-
-
-                Intent intent = new Intent(profile_page.this, chat_activity.class);
-                intent.putExtra("userIdFromSearch", userIdFromSearch);
-                intent.putExtra("chatId", chatUid);
-                startActivity(intent);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        Intent intent = new Intent(profile_page.this, chat_activity.class);
+//        intent.putExtra("userIdFromSearch", userIdFromSearch);
+//        intent.putExtra("chatId", chatUid);
+//        startActivity(intent);
 
     }
 
@@ -574,6 +603,9 @@ public class profile_page extends AppCompatActivity {
 
         tab_layout = findViewById(R.id.tab_layout);
         vp_viewPager2 = findViewById(R.id.vp_viewPager2);
+
+        linear2 = findViewById(R.id.linear2);
+        linearLayout5 = findViewById(R.id.linearLayout5);
     }
 
 }

@@ -53,7 +53,7 @@ public class add_funds_page extends AppCompatActivity {
     private StorageReference fundReqStorage;
     private FirebaseUser user;
 
-    private String myUserID, category, walletId, timeCreated, dateCreated;;
+    private String myUserID, category, walletId, timeCreated, dateCreated;
     private double fundAmount;
     private Uri imageUri;
     private long dateTimeInMillis;
@@ -184,6 +184,8 @@ public class add_funds_page extends AppCompatActivity {
                 Toast.makeText(add_funds_page.this, "PHP " + addFundInDouble +
                         " amount" +  " is successfully added.", Toast.LENGTH_SHORT).show();
                 generateWalletData();
+                imageUri = null;
+                iv_proofOfPayment.setImageDrawable(null);
                 progressDialog.dismiss();
 
             }
@@ -195,8 +197,7 @@ public class add_funds_page extends AppCompatActivity {
 
         Query query = walletDatabase.orderByChild("userID").equalTo(myUserID);
 
-
-        walletDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -208,7 +209,7 @@ public class add_funds_page extends AppCompatActivity {
 
                         walletId = dataSnapshot.getKey().toString();
                         fundAmount = wallets.getFundAmount();
-                        tv_fundBalance.setText(fundAmount+"");
+                        tv_fundBalance.setText((int)fundAmount+"");
                     }
 
 

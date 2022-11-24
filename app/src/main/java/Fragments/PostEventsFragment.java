@@ -322,7 +322,7 @@ public class PostEventsFragment extends Fragment {
                                     SweetAlertDialog pdialog;
                                     pdialog = new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE);
                                     pdialog.setTitleText("Event Successfully Added!");
-                                    pdialog.setContentText("Event has been \nsuccessfully added for Admin review");
+                                    pdialog.setContentText("Event has been \nsuccessfully posted");
                                     pdialog.setConfirmButton("Proceed", new SweetAlertDialog.OnSweetClickListener() {
                                         @Override
                                         public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -356,6 +356,7 @@ public class PostEventsFragment extends Fragment {
 
     private void clearText() {
 
+        et_eventPrice.setText("");
         iv_eventBannerPhoto.setImageDrawable(null);
         imageUri = null;
         et_projectName.setText("");

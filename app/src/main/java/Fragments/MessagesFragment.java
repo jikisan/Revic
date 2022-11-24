@@ -69,10 +69,14 @@ public class MessagesFragment extends Fragment {
             public void onItemClick(int position) {
 
                 String clickedChatId = arrChat.get(position).getChatID();
+                String chatUid1 = userOne + "_" + userTwo;
+                String chatUid2 = userTwo + "_" + userOne;
 
                 Intent intent = new Intent(getActivity(), chat_activity.class);
-                intent.putExtra("chatId", clickedChatId);
+                intent.putExtra("chatUid1", chatUid1);
+                intent.putExtra("chatUid2", chatUid2);
                 intent.putExtra("userIdFromSearch", userTwo);
+                intent.putExtra("needNotification", "1");
                 startActivity(intent);
             }
         });
@@ -100,6 +104,7 @@ public class MessagesFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
+                    arrChat.clear();
                     for (DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Chat chat = dataSnapshot.getValue(Chat.class);
@@ -108,7 +113,7 @@ public class MessagesFragment extends Fragment {
                         userOne = chat.getUserIdOne();
                         userTwo = chat.getUserIdTwo();
 
-                        if(userOne.equals(userID) || userTwo.equals(userID))
+                        if(userOne.equals(userID))
                         {
                             arrChat.add(chat);
                         }

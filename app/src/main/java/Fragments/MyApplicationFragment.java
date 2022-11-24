@@ -101,7 +101,7 @@ public class MyApplicationFragment extends Fragment {
                 }
 
 
-
+                progressBar.setVisibility(View.GONE);
 
             }
 

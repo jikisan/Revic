@@ -12,17 +12,19 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:src="@drawable/revic_logo"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_bannerPhoto"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/rounded100"
         android:backgroundTint="#92C5C5C5"
@@ -31,13 +33,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:tabIndicatorColor="@color/light_orange"
+        app:tabSelectedTextColor="@color/light_orange"
+        app:tabTextColor="@color/light_orange" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@color/white"
         android:focusable="false"
@@ -45,185 +57,21 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2">
+        app:layout_constraintTop_toBottomOf="@+id/tab_layout">
 
         <SearchView
             android:id="@+id/sv_search"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_weight="10"
-            android:paddingRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:background="@drawable/rounded100"
             android:focusable="false"
             android:iconifiedByDefault="false"
+            android:paddingRight="16dp"
             android:queryHint="Search" />
 
 
     </LinearLayout>
-
-    <HorizontalScrollView
-        android:id="@+id/scrollView_widgets"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:scrollbarStyle="insideInset"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/connected"
-                    app:tint="@color/black" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Most" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Connected" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/connected"
-                    app:tint="@color/black" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Most" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Applied" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/connected"
-                    app:tint="@color/black" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Near" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Me" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/connected"
-                    app:tint="@color/black" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Most" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Connected" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </HorizontalScrollView>
-
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:tabIndicatorColor="@color/light_orange"
-        app:tabSelectedTextColor="@color/light_orange"
-        app:tabTextColor="@color/light_orange" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vp_viewPager2"
@@ -232,16 +80,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_searches"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView_widgets"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

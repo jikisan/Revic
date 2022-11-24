@@ -3,6 +3,7 @@ package com.example.revic_capstone;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -37,6 +38,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import Adapters.AdapterEventsItem;
+import Adapters.AdapterReviewsItem;
 import Models.Applications;
 import Models.Events;
 import Models.Ratings;
@@ -57,6 +60,7 @@ public class view_event_page extends AppCompatActivity {
 
     private List<Events> arrEvents = new ArrayList<>();
     private List<Ratings> arrRatings = new ArrayList<>();
+    private AdapterReviewsItem adapterReviewsItem;
 
     private FirebaseUser user;
     private DatabaseReference eventDatabase, userDatabase, applicationDatabase, ratingDatabase;
@@ -128,11 +132,51 @@ public class view_event_page extends AppCompatActivity {
 
     private void generateRecyclerLayout() {
 
-        if(arrRatings.isEmpty())
-        {
-            tv_noReviews.setVisibility(View.VISIBLE);
-            recyclerView_reviews.setVisibility(View.GONE);
-        }
+        recyclerView_reviews.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view_event_page.this);
+        recyclerView_reviews.setLayoutManager(linearLayoutManager);
+
+        adapterReviewsItem = new AdapterReviewsItem(arrRatings);
+        recyclerView_reviews.setAdapter(adapterReviewsItem);
+
+        getViewHolderValues();
+
+
+    }
+
+    private void getViewHolderValues() {
+
+        Query query = ratingDatabase.orderByChild("ratingOfId").equalTo(eventId);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())                {
+
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Ratings ratings = dataSnapshot.getValue(Ratings.class);
+
+                        arrRatings.add(ratings);
+                    }
+
+                }
+
+                if(arrRatings.isEmpty())
+                {
+                    tv_noReviews.setVisibility(View.VISIBLE);
+                    recyclerView_reviews.setVisibility(View.GONE);
+                }
+
+                adapterReviewsItem.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void clickListeners() {

@@ -230,7 +230,6 @@ public class edit_profile_page extends AppCompatActivity {
                         String newContactNum = et_contactNumber.getText().toString();
                         String newDOB = tv_date.getText().toString();
 
-
                         HashMap<String, Object> hashMap = new HashMap<String, Object>();
                         hashMap.put("imageUrl", newImageUrl);
                         hashMap.put("imageName", newImageName);
@@ -246,10 +245,12 @@ public class edit_profile_page extends AppCompatActivity {
 
                                 if(task.isSuccessful())
                                 {
-                                    new SweetAlertDialog(edit_profile_page.this, SweetAlertDialog.SUCCESS_TYPE)
-                                            .setTitleText("SUCCESS!")
-                                            .setContentText("Profile Updated!.")
-                                            .setConfirmButton("Proceed", new SweetAlertDialog.OnSweetClickListener() {
+                                    SweetAlertDialog sDialog;
+                                    sDialog =  new SweetAlertDialog(edit_profile_page.this, SweetAlertDialog.SUCCESS_TYPE);
+                                    sDialog.setTitleText("SUCCESS!");
+                                    sDialog.setCancelable(false);
+                                    sDialog.setContentText("Profile Updated!.");
+                                    sDialog.setConfirmButton("Proceed", new SweetAlertDialog.OnSweetClickListener() {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
 
@@ -259,8 +260,8 @@ public class edit_profile_page extends AppCompatActivity {
                                                     intent.putExtra("myPosts", "1");
                                                     startActivity(intent);
                                                 }
-                                            })
-                                            .show();
+                                            });
+                                    sDialog.show();
                                 }
 
                             }

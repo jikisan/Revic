@@ -87,6 +87,7 @@ public class OngoingContractMusician extends Fragment {
 
                 if(snapshot.exists())
                 {
+
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Contracts contracts = dataSnapshot.getValue(Contracts.class);
