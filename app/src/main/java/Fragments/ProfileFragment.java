@@ -27,6 +27,7 @@ import com.example.revic_capstone.homepage;
 import com.example.revic_capstone.intro_logo;
 import com.example.revic_capstone.my_wallet_page;
 import com.example.revic_capstone.profile_user_page;
+import com.example.revic_capstone.view_connections;
 import com.example.revic_capstone.view_ratings;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -62,7 +63,7 @@ public class ProfileFragment extends Fragment {
     private TextView tv_userName, tv_category, tv_connectionsCount, tv_postBtn;
     private TextView  tv_editProfile, tv_changePassword, tv_privacyPolicy, tv_aboutUs, tv_logout,
             tv_postOrEvents, tv_eventsCount, tv_userRating, tv_postsCount, tv_myWallet, tv_myRatings;
-    private LinearLayout linearLayout5, linear2;
+    private LinearLayout linearLayout5, linear2, linear1;
     private ImageView iv_userPhoto;
     private ProgressDialog progressDialog;
     private RatingBar rb_userRating;
@@ -282,6 +283,16 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        linear1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getContext(), view_connections.class);
+                startActivity(intent);
+            }
+        });
+
 
         tv_editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -506,6 +517,7 @@ public class ProfileFragment extends Fragment {
         rb_userRating = view.findViewById(R.id.rb_userRating);
 
         linear2 = view.findViewById(R.id.linear2);
+        linear1 = view.findViewById(R.id.linear1);
         linearLayout5 = view.findViewById(R.id.linearLayout5);
 
         tab_layout = view.findViewById(R.id.tab_layout);

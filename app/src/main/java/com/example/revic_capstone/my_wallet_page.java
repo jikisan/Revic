@@ -25,6 +25,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import Adapters.AdapterTransactionsItem;
 import Models.Transactions;
@@ -144,9 +146,10 @@ public class my_wallet_page extends AppCompatActivity {
                         if(walletUserId.equals(myUserId))
                         {
                             walletId = dataSnapshot.getKey().toString();
-                            myFundAmount = wallets.getFundAmount();
+                            String myFundAmountString = NumberFormat.getNumberInstance(Locale.US).format(wallets.getFundAmount());
 
-                            tv_fundBalance.setText((int)myFundAmount + "");
+
+                            tv_fundBalance.setText(myFundAmountString);
                         }
 
                     }
@@ -263,7 +266,10 @@ public class my_wallet_page extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
 
                 Toast.makeText(my_wallet_page.this, "Withdrawal Success!", Toast.LENGTH_SHORT).show();
-                tv_fundBalance.setText(newFundValue+"");
+
+                String myFundAmountString = NumberFormat.getNumberInstance(Locale.US).format(newFundValue);
+
+                tv_fundBalance.setText(myFundAmountString);
                 adapterTransactionsItem.notifyDataSetChanged();
                 sDialog.dismiss();
                 progressDialog.dismiss();

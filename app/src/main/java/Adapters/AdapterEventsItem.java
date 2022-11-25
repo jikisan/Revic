@@ -17,7 +17,9 @@ import com.example.revic_capstone.profile_page;
 import com.example.revic_capstone.view_event_page;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import Models.Chat;
 import Models.Events;
@@ -57,14 +59,14 @@ public class AdapterEventsItem extends RecyclerView.Adapter<AdapterEventsItem.It
         String Day = splitDate[1];
 
         String eventName = events.getEventName();
-        String eventAddress = events.getEventAddress();
+        String eventPriceInString = NumberFormat.getNumberInstance(Locale.US).format(events.getEventPrice());
 
         String eventsUrl = events.getImageUrl();
 
         holder.tv_month.setText(Month);
         holder.tv_date.setText(Day);
         holder.tv_eventName.setText(eventName);
-        holder.tv_eventAddress.setText(eventAddress);
+        holder.tv_eventAddress.setText("₱ " + eventPriceInString + " / event");
 
         Picasso.get()
                 .load(eventsUrl)

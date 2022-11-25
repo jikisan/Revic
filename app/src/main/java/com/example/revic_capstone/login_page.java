@@ -24,8 +24,13 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import Models.Users;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class login_page extends AppCompatActivity {
@@ -36,7 +41,7 @@ public class login_page extends AppCompatActivity {
     private Button btn_login, btn_guest;
     private FirebaseAuth fAuth;
     private DatabaseReference userDatabase;
-    private String userType, projId;
+    private String userType, myUserId, myCategory;
     private FirebaseUser user;
 
 
@@ -44,30 +49,52 @@ public class login_page extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
-        userType = getIntent().getStringExtra("user");
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         setRef();
+
         validateUserType();
         ClickListener();
 
     }
 
+
     private void validateUserType() {
 
-//        if(!(user == null))
-//        {
-//            Intent intent = new Intent(login_page.this, homepage.class);
-//            startActivity(intent);
-//        }
-
-        if(!(userType == null))
+        if(!(user == null))
         {
-            if(userType.equals("guest"))
-            {
-                btn_guest.setVisibility(View.INVISIBLE);
-            }
+            myUserId = user.getUid();
+
+            generateMyUserData();
+
         }
+    }
+
+    private void generateMyUserData() {
+
+        userDatabase.child(myUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                Users users = snapshot.getValue(Users.class);
+
+                if(users != null) {
+
+                    myCategory = users.getCategory();
+                    Intent intent = new Intent(login_page.this, homepage.class);
+                    intent.putExtra("myPosts", "1");
+                    intent.putExtra("myCategory", myCategory);
+                    startActivity(intent);
+                    finish();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void ClickListener() {
@@ -145,32 +172,14 @@ public class login_page extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                                 Toast.makeText(login_page.this, "Login Successfully", Toast.LENGTH_SHORT).show();
 
-                                if(!(userType == null))
-                                {
-                                    if(userType.equals("guest"))
-                                    {
-                                        Toast.makeText(login_page.this, "Guest Login", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else
-                                    {
-                                        Intent intent = new Intent(login_page.this, homepage.class);
-                                        intent.putExtra("myPosts", "1");
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                                else
-                                {
-                                    Intent intent = new Intent(login_page.this, homepage.class);
-                                    intent.putExtra("myPosts", "1");
-                                    startActivity(intent);
-                                    finish();
-                                }
+                                myUserId = user.getUid();
 
+                                generateMyUserData();
 //                                if(user.isEmailVerified())
 //                                {
 //                                    Toast.makeText(login_page.this, "Login Successfully", Toast.LENGTH_SHORT).show();

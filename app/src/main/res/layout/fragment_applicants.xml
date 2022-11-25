@@ -18,6 +18,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_myBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:drawableStart="@drawable/wallet"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:text="@string/LOADING"
+        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_events"
         android:layout_width="match_parent"

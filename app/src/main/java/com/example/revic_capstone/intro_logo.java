@@ -38,14 +38,19 @@ public class intro_logo extends AppCompatActivity {
         setContentView(R.layout.intro_logo);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        myUserId = user.getUid();
+
 
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         walletDatabase = FirebaseDatabase.getInstance().getReference("Wallets");
 
+        if(!(user == null))
+        {
+            myUserId = user.getUid();
+            generateMyUserData();
+            checkIfWalletExist();
+        }
 
-        generateMyUserData();
-        checkIfWalletExist();
+
 
         Timer timer = new Timer();
 
@@ -108,6 +113,7 @@ public class intro_logo extends AppCompatActivity {
         });
 
     }
+
     private void checkIfWalletExist() {
 
         Query query = walletDatabase.orderByChild("userID").equalTo(myUserId);

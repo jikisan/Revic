@@ -38,7 +38,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Adapters.fragmentAdapter;
-import Adapters.fragmentAdapterProfile;
+import Adapters.fragmentAdapterOtherUsers;
+import Adapters.fragmentAdapterOrganizer;
 import Models.Chat;
 import Models.Connections;
 import Models.Ratings;
@@ -57,8 +58,8 @@ public class profile_page extends AppCompatActivity {
 
     private TabLayout tab_layout;
     private ViewPager2 vp_viewPager2;
-    private fragmentAdapter adapter;
-    private fragmentAdapterProfile fragmentAdapterProfile;
+    private fragmentAdapterOtherUsers fragmentAdapterOtherUsers;
+    private fragmentAdapterOrganizer fragmentAdapterOrganizer;
 
     private StorageReference userStorage, photoStorage, videoStorage;
     private FirebaseUser user;
@@ -520,8 +521,8 @@ public class profile_page extends AppCompatActivity {
         tab_layout.addTab(tab_layout.newTab().setIcon(R.drawable.videos));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        adapter = new fragmentAdapter(fragmentManager, getLifecycle());
-        vp_viewPager2.setAdapter(adapter);
+        fragmentAdapterOtherUsers = new fragmentAdapterOtherUsers(fragmentManager, getLifecycle());
+        vp_viewPager2.setAdapter(fragmentAdapterOtherUsers);
 
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -553,8 +554,8 @@ public class profile_page extends AppCompatActivity {
         tab_layout.addTab(tab_layout.newTab().setText("EVENTS"));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentAdapterProfile = new fragmentAdapterProfile(fragmentManager, getLifecycle());
-        vp_viewPager2.setAdapter(fragmentAdapterProfile);
+        fragmentAdapterOrganizer = new fragmentAdapterOrganizer(fragmentManager, getLifecycle());
+        vp_viewPager2.setAdapter(fragmentAdapterOrganizer);
 
         tab_layout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

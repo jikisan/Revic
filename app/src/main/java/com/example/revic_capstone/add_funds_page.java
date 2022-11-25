@@ -32,10 +32,12 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import Models.Transactions;
 import Models.Wallets;
@@ -208,8 +210,9 @@ public class add_funds_page extends AppCompatActivity {
                         Wallets wallets = dataSnapshot.getValue(Wallets.class);
 
                         walletId = dataSnapshot.getKey().toString();
-                        fundAmount = wallets.getFundAmount();
-                        tv_fundBalance.setText((int)fundAmount+"");
+                        String myFundAmountString = NumberFormat.getNumberInstance(Locale.US).format(wallets.getFundAmount());
+
+                        tv_fundBalance.setText(myFundAmountString);
                     }
 
 

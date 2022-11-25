@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -156,26 +157,42 @@ public class view_contract_page extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                refundFund();
-
-                Toast.makeText(view_contract_page.this, "Contract Terminated", Toast.LENGTH_SHORT).show();
-
-                String newValue = "terminated";
-                HashMap<String, Object> hashMap = new HashMap<String, Object>();
-                hashMap.put("contractStatus", newValue);
-
-                contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                sDialog = new SweetAlertDialog(view_contract_page.this, SweetAlertDialog.WARNING_TYPE);
+                sDialog.setTitleText("Warning");
+                sDialog.setCancelText("Back");
+                sDialog.setConfirmButton("Submit", new SweetAlertDialog.OnSweetClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-                        linearLayout7.setVisibility(View.INVISIBLE);
+                        progressDialog = new ProgressDialog(view_contract_page.this);
+                        progressDialog.setTitle("Processing...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
 
-                        tv_done.setVisibility(View.INVISIBLE);
-                        tv_ongoing.setVisibility(View.INVISIBLE);
-                        tv_terminated.setVisibility(View.VISIBLE);
+                        String newValue = "terminated";
+                        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+                        hashMap.put("contractStatus", newValue);
+
+                        contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                refundFund();
+
+
+                            }
+                        });
+
 
                     }
                 });
+                sDialog.setContentText("Terminate contract with \n" + tv_userName.getText() + "?");
+                sDialog.show();
+
+
+
+
+
 
             }
         });
@@ -192,7 +209,30 @@ public class view_contract_page extends AppCompatActivity {
 
             }
         });
+
+        iv_userPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(view.getContext(), profile_page.class);
+                intent.putExtra("userID", employeeId);
+                intent.putExtra("myPosts", "2");
+                view.getContext().startActivity(intent);
+            }
+        });
+
+        tv_userName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(view.getContext(), profile_page.class);
+                intent.putExtra("userID", employeeId);
+                intent.putExtra("myPosts", "2");
+                view.getContext().startActivity(intent);
+            }
+        });
     }
+
 
     private void addFunds() {
 
@@ -240,8 +280,6 @@ public class view_contract_page extends AppCompatActivity {
 
     private void generateNotification() {
 
-        setUpDate();
-
         DatabaseReference notificationDatabase = FirebaseDatabase.getInstance().getReference("Notifications");
 
         String eventName = tv_eventName.getText().toString();
@@ -274,6 +312,8 @@ public class view_contract_page extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     private void refundFund() {
@@ -321,25 +361,41 @@ public class view_contract_page extends AppCompatActivity {
 
     private void updateContractData() {
 
-        String newValue = "terminated";
-        HashMap<String, Object> hashMap = new HashMap<String, Object>();
-        hashMap.put("contractStatus", newValue);
+        DatabaseReference notificationDatabase = FirebaseDatabase.getInstance().getReference("Notifications");
 
-        contractDatabase.child(contractId).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String eventName = tv_eventName.getText().toString();
+
+        String notificationType = "payment";
+        String notificationMessage = "Event " + eventName.toUpperCase() + " terminated. " +
+                "Php " + (int)eventPrice + " has been refunded to your account";
+        String contractId = "";
+        String userId = myUserId;
+        String chatId = "";
+        String eventId = "";
+
+        Notifications notifications = new Notifications(dateTimeInMillis, dateCreated, timeCreated, notificationType,
+                notificationMessage, contractId, userId, chatId, eventId);
+
+        notificationDatabase.push().setValue(notifications).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 Toast.makeText(view_contract_page.this, "Contract Terminated", Toast.LENGTH_SHORT).show();
 
                 linearLayout7.setVisibility(View.INVISIBLE);
+                btn_rate.setVisibility(View.VISIBLE);
 
-                tv_done.setVisibility(View.INVISIBLE);
+                tv_terminated.setVisibility(View.INVISIBLE);
                 tv_ongoing.setVisibility(View.INVISIBLE);
-                tv_terminated.setVisibility(View.VISIBLE);
+                tv_done.setVisibility(View.VISIBLE);
+                sDialog.dismiss();
+                progressDialog.dismiss();
 
             }
         });
     }
+
+
 
 
     private void generateRatingAverage() {
@@ -484,7 +540,8 @@ public class view_contract_page extends AppCompatActivity {
                     String eventStart = events.getTimeStart();
                     String eventEnd = events.getTimeEnd();
                     String eventDescription = events.getEventDescription();
-                    eventPrice = events.getEventPrice();
+                    String eventPriceInString = NumberFormat.getNumberInstance(Locale.US).format(events.getEventPrice());
+
 
                     tv_eventName.setText(eventName);
                     tv_eventAddress.setText(eventAddress);
@@ -492,7 +549,7 @@ public class view_contract_page extends AppCompatActivity {
                     tv_eventTimeStart.setText(eventStart);
                     tv_eventTimeEnd.setText(eventEnd);
                     tv_eventDescription.setText(eventDescription);
-                    tv_eventPrice.setText("₱ "+eventPrice+" / Event");
+                    tv_eventPrice.setText("₱ "+ eventPriceInString +" / Event");
 
                 }
             }
@@ -562,6 +619,8 @@ public class view_contract_page extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     private void setRef() {

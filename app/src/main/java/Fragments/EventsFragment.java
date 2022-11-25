@@ -40,6 +40,7 @@ public class EventsFragment extends Fragment {
     private List<String> arrEventsId = new ArrayList<>();
 
     private ProgressBar progressBar;
+    private TextView tv_errorMessage;
     private RecyclerView recyclerView_events;
     private AdapterEventsItem adapterEventsItem;
 
@@ -95,11 +96,22 @@ public class EventsFragment extends Fragment {
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Events events = dataSnapshot.getValue(Events.class);
+                        String creatorId = events.getUserID();
                         eventId = dataSnapshot.getKey().toString();
 
-                        arrEvents.add(events);
-                        arrEventsId.add(eventId);
+                        if(creatorId.equals(myUserId))
+                        {
+                            arrEvents.add(events);
+                            arrEventsId.add(eventId);
+                        }
+
                     }
+                }
+
+                if(arrEvents.isEmpty())
+                {
+                    recyclerView_events.setVisibility(View.GONE);
+                    tv_errorMessage.setVisibility(View.VISIBLE);
                 }
 
                 Collections.reverse(arrEvents);
@@ -119,6 +131,7 @@ public class EventsFragment extends Fragment {
     private void setRef(View view) {
 
         progressBar = view.findViewById(R.id.progressBar);
+        tv_errorMessage = view.findViewById(R.id.tv_errorMessage);
 
         recyclerView_events = view.findViewById(R.id.recyclerView_events);
 

@@ -7,10 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,12 +33,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import Adapters.AdapterEventsItem;
 import Adapters.AdapterReviewsItem;
@@ -57,6 +61,7 @@ public class view_event_page extends AppCompatActivity {
     private ProgressBar progressBar;
     private RatingBar rb_userRating;
     private RecyclerView recyclerView_reviews;
+    private LinearLayout linearLayout5;
 
     private List<Events> arrEvents = new ArrayList<>();
     private List<Ratings> arrRatings = new ArrayList<>();
@@ -201,6 +206,28 @@ public class view_event_page extends AppCompatActivity {
 
             }
         });
+
+        iv_userPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(view.getContext(), profile_page.class);
+                intent.putExtra("userID", creatorUserId);
+                intent.putExtra("myPosts", "2");
+                view.getContext().startActivity(intent);
+
+            }
+        });
+
+        linearLayout5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(view.getContext(), view_ratings.class);
+                intent.putExtra("ratingOfId", eventId);
+                view.getContext().startActivity(intent);
+            }
+        });
     }
 
     private void addDataToApplicationDB() {
@@ -251,7 +278,7 @@ public class view_event_page extends AppCompatActivity {
                 {
                     eventImageUrl =  events.getImageUrl();
                     eventName = events.getEventName();
-                    double eventPrice = events.getEventPrice();
+                    String eventPriceInString = NumberFormat.getNumberInstance(Locale.US).format(events.getEventPrice());
                     int applicants = events.getApplicants();
                     String dateSched = events.getEventDateSched();
                     String startTime = events.getTimeStart();
@@ -268,7 +295,7 @@ public class view_event_page extends AppCompatActivity {
                             .into(iv_eventBannerPhoto);
 
                     tv_eventName.setText(eventName);
-                    tv_eventPrice.setText("₱ "+eventPrice+" / Event");
+                    tv_eventPrice.setText("₱ "+ eventPriceInString +" / Event");
                     tv_applicantsCount.setText(applicants + "");
                     tv_dateSched.setText(dateSched);
                     tv_timeAvailable.setText(startTime + " - " + endTime);
@@ -448,5 +475,7 @@ public class view_event_page extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         btn_back = findViewById(R.id.btn_back);
+
+        linearLayout5 = findViewById(R.id.linearLayout5);
     }
 }

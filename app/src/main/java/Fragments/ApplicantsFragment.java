@@ -23,13 +23,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import Adapters.AdapterApplicationsItem;
 import Models.Applications;
 import Models.Events;
 import Models.Users;
+import Models.Wallets;
 import Objects.TextModifier;
 
 public class ApplicantsFragment extends Fragment {
@@ -37,17 +40,17 @@ public class ApplicantsFragment extends Fragment {
     private List<Applications> arrApplications = new ArrayList<>();
     private List<String> arrApplicationId = new ArrayList<>();
 
-    private TextView tv_noPhotos;
+    private TextView tv_noPhotos, tv_myBalance;
     private ProgressBar progressBar;
     private RecyclerView recyclerView_events;
     private AdapterApplicationsItem adapterApplicationsItem;
     private TextModifier textModifier = new TextModifier();
 
     private FirebaseUser user;
-    private DatabaseReference applicationDatabase, userDatabase, eventDatabase;
+    private DatabaseReference applicationDatabase, walletDatabase, eventDatabase;
 
     private String myUserId;
-
+    private double myFundAmount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,14 +61,50 @@ public class ApplicantsFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
 
+        walletDatabase = FirebaseDatabase.getInstance().getReference("Wallets");
         applicationDatabase = FirebaseDatabase.getInstance().getReference("Applications");
-        userDatabase = FirebaseDatabase.getInstance().getReference("Users");
         eventDatabase = FirebaseDatabase.getInstance().getReference("Events");
 
         setRef(view);
+        generateWalletData();
         generateRecyclerLayout();
 
         return view;
+    }
+
+    private void generateWalletData() {
+
+        Query query = walletDatabase.orderByChild("userID").equalTo(myUserId);
+
+        walletDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                    {
+                        Wallets wallets = dataSnapshot.getValue(Wallets.class);
+                        String walletUserId = wallets.getUserID();
+
+                        if(walletUserId.equals(myUserId))
+                        {
+                            String myFundAmountString = NumberFormat.getNumberInstance(Locale.US).format(wallets.getFundAmount());
+
+                            tv_myBalance.setText("₱ " + myFundAmountString );
+                        }
+
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void generateRecyclerLayout() {
@@ -142,6 +181,7 @@ public class ApplicantsFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.progressBar);
         tv_noPhotos = view.findViewById(R.id.tv_noPhotos);
+        tv_myBalance = view.findViewById(R.id.tv_myBalance);
         recyclerView_events = view.findViewById(R.id.recyclerView_events);
     }
 }

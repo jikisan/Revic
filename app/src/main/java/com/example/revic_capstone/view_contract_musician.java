@@ -28,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -249,7 +250,8 @@ public class view_contract_musician extends AppCompatActivity {
                     String eventStart = events.getTimeStart();
                     String eventEnd = events.getTimeEnd();
                     String eventDescription = events.getEventDescription();
-                    eventPrice = events.getEventPrice();
+                    String eventPriceInString = NumberFormat.getNumberInstance(Locale.US).format(events.getEventPrice());
+
 
                     Picasso.get().load(imageUrl).fit().centerCrop().into(iv_eventPhoto);
                     tv_eventName.setText(eventName);
@@ -258,7 +260,7 @@ public class view_contract_musician extends AppCompatActivity {
                     tv_eventTimeStart.setText(eventStart);
                     tv_eventTimeEnd.setText(eventEnd);
                     tv_eventDescription.setText(eventDescription);
-                    tv_eventPrice.setText("₱ "+eventPrice+" / Event");
+                    tv_eventPrice.setText("₱ "+ eventPriceInString +" / Event");
 
 
                 }

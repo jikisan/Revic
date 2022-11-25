@@ -23,7 +23,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.revic_capstone.R;
 import com.example.revic_capstone.homepage;
+import com.example.revic_capstone.photo_view_page;
 import com.example.revic_capstone.profile_page;
+import com.example.revic_capstone.video_view_page;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -52,6 +54,7 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
     private OnItemClickListener onItemClickListener;
     private FirebaseUser user;
     private SweetAlertDialog sDialog;
+    private String myUserID;
 
     private DatabaseReference postDatabase = FirebaseDatabase.getInstance().getReference("Posts");;
 
@@ -76,6 +79,7 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
     public void onBindViewHolder(@NonNull AdapterPostsItem.ItemViewHolder holder, int position) {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        myUserID = user.getUid();
 
         final EditText edittext = new EditText(context);
         int currentPosition = position;

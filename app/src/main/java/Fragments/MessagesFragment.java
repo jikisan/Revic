@@ -69,8 +69,14 @@ public class MessagesFragment extends Fragment {
             public void onItemClick(int position) {
 
                 String clickedChatId = arrChat.get(position).getChatID();
-                String chatUid1 = userOne + "_" + userTwo;
-                String chatUid2 = userTwo + "_" + userOne;
+                String currentUserOne;
+                String currentUserTwo;
+                String splitClickedChatId[] = clickedChatId.split("_");
+                currentUserOne = splitClickedChatId[0];
+                currentUserTwo = splitClickedChatId[1];
+
+                String chatUid1 = currentUserOne + "_" + currentUserTwo;
+                String chatUid2 = currentUserTwo + "_" + currentUserOne;
 
                 Intent intent = new Intent(getActivity(), chat_activity.class);
                 intent.putExtra("chatUid1", chatUid1);
