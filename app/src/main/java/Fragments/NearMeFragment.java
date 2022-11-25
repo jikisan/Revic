@@ -82,9 +82,86 @@ public class NearMeFragment extends Fragment {
 
         setRef(view);
         validatePermission();
-        generateRecyclerLayout();
 
         return view;
+    }
+
+    private void validatePermission() {
+
+        // check condition
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // When permission is granted
+            // Call method
+            getCurrentLocation();
+        } else {
+            // When permission is not granted
+            // Call method
+
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getCurrentLocation() {
+        // Initialize Location manager
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        // Check condition
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            // When location service is enabled
+            // Get last location
+
+            client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(
+                        @NonNull Task<Location> task) {
+
+                    // Initialize location
+                    Location location = task.getResult();                    // Check condition
+                    if (location != null) {
+                        // When location result is not
+                        // null set latitude
+                        myLatDouble = location.getLatitude();
+                        myLongDouble = location.getLongitude();
+                        generateRecyclerLayout();
+
+
+                    } else {
+                        // When location result is null
+                        // initialize location request
+                        LocationRequest locationRequest = new LocationRequest()
+                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                .setInterval(10000)
+                                .setFastestInterval(1000)
+                                .setNumUpdates(1);
+
+                        // Initialize location call back
+                        LocationCallback locationCallback = new LocationCallback() {
+                            @Override
+                            public void
+                            onLocationResult(LocationResult locationResult) {
+                                // Initialize
+                                // location
+                                Location location1 = locationResult.getLastLocation();
+                                myLatDouble = location1.getLatitude();
+                                myLongDouble = location1.getLongitude();
+                                generateRecyclerLayout();
+
+
+                            }
+                        };
+
+                        // Request location updates
+                        client.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+                    }
+                }
+            });
+        } else {
+            // When location service is not enabled
+            // open location setting
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 
     private void generateRecyclerLayout() {
@@ -172,77 +249,5 @@ public class NearMeFragment extends Fragment {
         recyclerView_users = view.findViewById(R.id.recyclerView_users);
     }
 
-    private void validatePermission() {
 
-        // check condition
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // When permission is granted
-            // Call method
-            getCurrentLocation();
-        } else {
-            // When permission is not granted
-            // Call method
-
-            requestPermissions(
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getCurrentLocation() {
-        // Initialize Location manager
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        // Check condition
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            // When location service is enabled
-            // Get last location
-
-            client.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(
-                        @NonNull Task<Location> task) {
-
-                    // Initialize location
-                    Location location = task.getResult();                    // Check condition
-                    if (location != null) {
-                        // When location result is not
-                        // null set latitude
-                        myLatDouble = location.getLatitude();
-                        myLongDouble = location.getLongitude();
-
-                    } else {
-                        // When location result is null
-                        // initialize location request
-                        LocationRequest locationRequest = new LocationRequest()
-                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                                .setInterval(10000)
-                                .setFastestInterval(1000)
-                                .setNumUpdates(1);
-
-                        // Initialize location call back
-                        LocationCallback locationCallback = new LocationCallback() {
-                            @Override
-                            public void
-                            onLocationResult(LocationResult locationResult) {
-                                // Initialize
-                                // location
-                                Location location1 = locationResult.getLastLocation();
-                                myLatDouble = location1.getLatitude();
-                                myLongDouble = location1.getLongitude();
-
-                            }
-                        };
-
-                        // Request location updates
-                        client.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
-                    }
-                }
-            });
-        } else {
-            // When location service is not enabled
-            // open location setting
-            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        }
-    }
 }

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.revic_capstone.R;
 import com.example.revic_capstone.homepage;
+import com.example.revic_capstone.my_wallet_page;
 import com.example.revic_capstone.photo_view_page;
 import com.example.revic_capstone.profile_page;
 import com.example.revic_capstone.video_view_page;
@@ -124,17 +125,6 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
             Uri uri = Uri.parse(fileUrl);
             holder.video_postVideo.setVideoURI(uri);
 
-//            MediaController mediaController = new MediaController(context);
-//            mediaController.setAnchorView(holder.video_postVideo);
-//            mediaController.setMediaPlayer(holder.video_postVideo);
-//            holder.video_postVideo.setMediaController(mediaController);
-
-//            holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    holder.video_postVideo.start();
-//                }
-//            });
 
             holder.tv_pause.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -178,10 +168,22 @@ public class AdapterPostsItem extends RecyclerView.Adapter<AdapterPostsItem.Item
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(view.getContext(), profile_page.class);
-                intent.putExtra("userID", postUserId);
-                intent.putExtra("myPosts", "2");
-                view.getContext().startActivity(intent);
+                if(!postUserId.equals(myUserID))
+                {
+                    Intent intent = new Intent(view.getContext(), profile_page.class);
+                    intent.putExtra("userID", postUserId);
+                    intent.putExtra("myPosts", "2");
+                    view.getContext().startActivity(intent);
+                }
+                else if(postUserId.equals(myUserID))
+                {
+                    Intent intent = new Intent(context, homepage.class);
+                    intent.putExtra("pageNumber", "5");
+                    intent.putExtra("myCategory", "Event Organizer");
+                    intent.putExtra("myPosts", "1");
+                    view.getContext().startActivity(intent);
+                }
+
 
             }
         });

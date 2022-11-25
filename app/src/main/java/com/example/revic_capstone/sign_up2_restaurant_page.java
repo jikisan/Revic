@@ -96,6 +96,13 @@ public class sign_up2_restaurant_page extends AppCompatActivity {
             }
         });
 
+        iv_validID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickImageForValidID();
+            }
+        });
+
         tv_addValidID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

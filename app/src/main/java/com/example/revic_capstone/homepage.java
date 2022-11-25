@@ -59,14 +59,10 @@ public class homepage extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_nav);
 
 
-
-
-
         if(pageNumber != null) {
 
             if(pageNumber.equals("3"))
             {
-
 
                 if( myCategory.equals("Musician"))
                 {
@@ -77,7 +73,8 @@ public class homepage extends AppCompatActivity {
                     bottomNavigationView.setSelectedItemId(R.id.event);
 
                 }
-                else{
+                else
+                {
 
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.container, postEventsFragment);
@@ -85,7 +82,9 @@ public class homepage extends AppCompatActivity {
 
                     bottomNavigationView.setSelectedItemId(R.id.event);
                 }
-            } else if(pageNumber.equals("5"))
+
+            }
+            else if(pageNumber.equals("5"))
             {
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

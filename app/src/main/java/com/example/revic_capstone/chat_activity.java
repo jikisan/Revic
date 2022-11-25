@@ -383,6 +383,7 @@ public class chat_activity extends AppCompatActivity {
     public void addMessageBox(String message, int type){
 
         TextView tv = new TextView(chat_activity.this);
+        tv.setTextSize(12);
         tv.setText(fullName+":");
         LinearLayout.LayoutParams lptv = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lptv.weight = 1.0f;
@@ -399,6 +400,7 @@ public class chat_activity extends AppCompatActivity {
 
 
         TextView tv2 = new TextView(chat_activity.this);
+        tv2.setTextSize(12);
         tv2.setText("Me: ");
         LinearLayout.LayoutParams lptv2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lptv2.weight = 1.0f;

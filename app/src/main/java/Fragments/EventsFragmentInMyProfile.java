@@ -1,6 +1,5 @@
 package Fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,10 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.revic_capstone.R;
-import com.example.revic_capstone.view_event_page;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,12 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import Adapters.AdapterChatItem;
 import Adapters.AdapterEventsItem;
-import Models.Chat;
 import Models.Events;
 
-public class EventsFragment extends Fragment {
+
+public class EventsFragmentInMyProfile extends Fragment {
 
     private List<Events> arrEvents = new ArrayList<>();
     private List<String> arrEventsId = new ArrayList<>();
@@ -53,7 +49,7 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_events, container, false);
+        View view = inflater.inflate(R.layout.fragment_events_in_my_profile, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         myUserId = user.getUid();
@@ -96,10 +92,14 @@ public class EventsFragment extends Fragment {
                     for(DataSnapshot dataSnapshot : snapshot.getChildren())
                     {
                         Events events = dataSnapshot.getValue(Events.class);
+                        String creatorId = events.getUserID();
                         eventId = dataSnapshot.getKey().toString();
 
-                        arrEvents.add(events);
-                        arrEventsId.add(eventId);
+                        if(creatorId.equals(myUserId))
+                        {
+                            arrEvents.add(events);
+                            arrEventsId.add(eventId);
+                        }
 
                     }
                 }
